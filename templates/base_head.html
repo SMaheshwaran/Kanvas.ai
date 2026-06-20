@@ -13,7 +13,7 @@
     <title>Nocode Tool</title>
 
     <!-- Favicon -->
-    <link rel="icon" href=" {% static 'img/core-img/favicon.ico' %} ">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1a2e'/><text x='4' y='22' font-family='sans-serif' font-weight='700' font-size='14' fill='%237c6ef9'>K</text><text x='15' y='22' font-family='sans-serif' font-weight='400' font-size='10' fill='%23ffffff'>.ai</text></svg>">
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href=" {% static 'style.css' %} ">
@@ -60,12 +60,11 @@
                             <div class="classynav">
                                 <ul>
                                     <li><a href=" {% url 'home' %} ">Home</a></li>
-                                    <li><a href=" {% url 'services' %} ">Services</a></li>
                                     <li><a >Features</a>
                                         <ul class="dropdown">
                                             <li><a href=" {% url 'home' %} ">Home</a></li>
                                             <li><a href=" {% url 'url' %} ">Dowmload Temp</a></li>
-                                            <li><a href=" {% url 'services' %} ">Nocode</a>
+                                            <li><a href=" {% url 'view_pages' %} ">Nocode</a>
                                                 <ul class="dropdown">
                                                     <li><a href=" {% url 'addpage' %} ">Create</a></li>
                                                     <li><a href=" {% url 'view_pages' %} ">List</a></li>
@@ -74,23 +73,12 @@
                                                    
                                                 </ul>
                                             </li>
-                                            <li><a>Blogs</a></li>
-                                            <li><a href=" {% url 'contact' %} ">Admin</a></li>
+                                            <li><a href="#">Admin</a></li>
                                             <li><a>Code Snippers</a></li>
                                         </ul>
     
-                                    <li><a href=" {% url 'contact' %} ">Contact</a></li>
                                 </ul>
 
-                                <!-- Top Social Info -->
-                                <div class="top-social-info ml-5">
-                                    <a href="https://github.com/GaneshMumbai2001"><i class="fa fa-github"></i></a>
-                                    <a href="https://www.linkedin.com/in/ganesh-mumbai-b863a3203"><i class="fa fa-linkedin"></i></a>
-                                    <a href="https://twitter.com/ganesh__mumbai?t=JwSmlCKf5RWpAcMI3IB3zA&s=09"><i class="fa fa-twitter"></i></a>
-                                    <a href="https://www.facebook.com/ganesh.mumbai.12?mibextid=ZbWKwL"><i class="fa fa-facebook"></i></a>
-                                    <a href="https://instagram.com/ganeshmumbaiofficial?igshid=NTc4MTIwNjQ2YQ=="><i class="fa fa-instagram"></i></a>
-                                    <a href="https://wa.me/+916383328121"><i class="fa fa-whatsapp"></i></a>
-                                </div>
                             </div>
                             <!-- Nav End -->
                         </div>

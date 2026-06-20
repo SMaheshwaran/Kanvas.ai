@@ -1,80 +1,608 @@
-{% extends 'base.html' %}
 {% load static %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generate &amp; Edit — Kanvas AI</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1a2e'/><text x='4' y='22' font-family='sans-serif' font-weight='700' font-size='14' fill='%237c6ef9'>K</text><text x='15' y='22' font-family='sans-serif' font-weight='400' font-size='10' fill='%23ffffff'>.ai</text></svg>">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
 
-<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+*{box-sizing:border-box;margin:0;padding:0;}
 
-<style>
-  /* Glass theme styles */
-  .glass {
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    border-radius: 10px;
-  }
+body{
+  background:#0a0a0b;
+  font-family:'DM Sans',sans-serif;
+  color:#f4f4f5;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
 
-  /* Custom styling */
-  .jumbotron {
-    background-image: url('https://i.pinimg.com/originals/0e/b1/56/0eb15636563ecc2920056a5dd6e496c5.gif');
-    background-position: center;
-    background-size: cover;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+/* ─── HEADER ─────────────────────────────────────────────── */
+.site-nav{position:fixed;top:0;left:0;width:100%;padding:14px 48px;z-index:200;display:flex;align-items:center;background:rgba(12,12,16,0.72);border-bottom:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);box-shadow:0 1px 24px rgba(0,0,0,0.28);}
+.nav-brand{flex:1;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;text-decoration:none;white-space:nowrap;}
+.nav-brand span{color:#7c6ef9;}
+.site-nav .nav-links{display:flex;gap:32px;list-style:none;flex:0 0 auto;}
+.site-nav .nav-links a{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;color:rgba(255,255,255,0.52);text-decoration:none;text-transform:uppercase;letter-spacing:1.5px;transition:color 0.2s;}
+.site-nav .nav-links a:hover,.site-nav .nav-links a.active{color:rgba(255,255,255,0.9);}
+.nav-right{flex:1;display:flex;justify-content:flex-end;}
+.nav-cta{background:#7c6ef9;color:#fff;border:none;border-radius:20px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap;margin-left:8px;transition:background 0.2s;}
+.nav-cta:hover{background:#9080fb;}
+@media(max-width:768px){.site-nav .nav-links{display:none;}.site-nav{padding:12px 20px;}}
 
-  .form-container {
-    max-width: 400px;
-    padding: 20px;
-  }
+/* ─── MAIN CONTENT ───────────────────────────────────────── */
+.ag-wrap{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:60px 24px 80px;
+  position:relative;
+  overflow:hidden;
+}
 
-  .form-input {
-    background-color: rgba(255, 255, 255, 0.9);
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-  }
+.ag-wrap::before{
+  content:'';
+  position:absolute;
+  top:-120px;left:50%;
+  transform:translateX(-50%);
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(124,110,249,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
 
-  .form-input:hover {
-    background-color: rgba(255, 255, 255, 1);
-  }
+.ag-eyebrow{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:#7c6ef9;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
 
-  .form-input:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 1);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
+.ag-eyebrow::before,.ag-eyebrow::after{
+  content:'';
+  display:block;
+  width:24px;height:1px;
+  background:#7c6ef9;
+  opacity:0.5;
+}
 
-  .form-submit {
-    background-color: #3182CE;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    width: 100%;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
+.ag-heading{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(32px,5vw,52px);
+  font-weight:400;
+  text-align:center;
+  line-height:1.15;
+  letter-spacing:-0.5px;
+  margin-bottom:12px;
+  color:#f4f4f5;
+}
 
-  .form-submit:hover {
-    background-color: #2C5282;
-  }
-</style>
+.ag-heading em{font-style:italic;color:#9d93fa;}
 
-<!-- Jumbotron -->
-<div class="jumbotron">
-  <div class="glass form-container">
-    <form action="/autogenerate_edit" method="post">
-      {% csrf_token %}
-      <input rows="60" name="query" id="query" class="form-input" placeholder="Enter the query">
-      <input name="ProjectName" id="ProjectName" class="form-input" placeholder="Enter the ProjectName">
-      <input class="form-submit" type="submit" value="Generate and edit">
-    </form>
+.ag-sub{
+  font-size:15px;
+  color:#71717a;
+  font-weight:300;
+  text-align:center;
+  margin-bottom:52px;
+  max-width:420px;
+  line-height:1.6;
+}
+
+.ag-card{
+  width:100%;
+  max-width:620px;
+  background:#111114;
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:20px;
+  padding:36px;
+  position:relative;
+}
+
+.ag-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  border:1px solid transparent;
+  background:linear-gradient(135deg,rgba(124,110,249,0.15),transparent 60%) border-box;
+  -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:destination-out;
+  mask-composite:exclude;
+  pointer-events:none;
+}
+
+.q-row{margin-bottom:28px;}
+
+.q-label{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  color:#52525b;
+  margin-bottom:8px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.q-num{
+  width:18px;height:18px;
+  border-radius:50%;
+  background:#1a1a22;
+  border:1px solid rgba(255,255,255,0.1);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:9px;
+  color:#7c6ef9;
+  font-family:'JetBrains Mono',monospace;
+  flex-shrink:0;
+}
+
+.q-options{display:flex;flex-wrap:wrap;gap:8px;}
+
+.q-chip{
+  padding:8px 16px;
+  border-radius:100px;
+  background:#18181d;
+  border:1px solid rgba(255,255,255,0.08);
+  font-size:13px;
+  font-weight:400;
+  color:#a1a1aa;
+  cursor:pointer;
+  transition:all 0.18s;
+  white-space:nowrap;
+  user-select:none;
+}
+
+.q-chip:hover{border-color:rgba(124,110,249,0.4);color:#c4bffe;background:#1e1a3a;}
+.q-chip.selected{background:#1e1a3a;border-color:#7c6ef9;color:#c4bffe;}
+
+.q-textarea,.q-text{
+  width:100%;
+  background:#18181d;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:14px 16px;
+  color:#f4f4f5;
+  font-size:14px;
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  outline:none;
+  line-height:1.6;
+  transition:border-color 0.18s;
+}
+
+.q-textarea{resize:none;}
+.q-text{height:48px;resize:none;}
+.q-textarea:focus,.q-text:focus{border-color:rgba(124,110,249,0.4);}
+.q-textarea::placeholder,.q-text::placeholder{color:#3f3f46;}
+
+.ag-divider{height:1px;background:rgba(255,255,255,0.06);margin:28px 0;}
+
+.ag-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+
+.ag-btn{
+  height:48px;
+  padding:0 28px;
+  border-radius:100px;
+  font-size:14px;
+  font-weight:500;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;
+  transition:all 0.18s;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  border:none;
+}
+
+.ag-btn-primary{background:#7c6ef9;color:#fff;}
+.ag-btn-primary:hover{background:#8c80fa;transform:translateY(-1px);}
+.ag-btn-ghost{background:transparent;color:#71717a;border:1px solid rgba(255,255,255,0.08);}
+.ag-btn-ghost:hover{color:#a1a1aa;border-color:rgba(255,255,255,0.14);}
+
+.ag-hint{font-size:12px;color:#3f3f46;font-weight:400;}
+
+.ag-result{
+  width:100%;
+  max-width:620px;
+  margin-top:24px;
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity 0.5s ease,transform 0.5s ease;
+  pointer-events:none;
+}
+
+.ag-result.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+.ag-result-inner{
+  background:#111114;
+  border:1px solid rgba(124,110,249,0.2);
+  border-radius:20px;
+  padding:32px 36px;
+}
+
+.ag-result-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(124,110,249,0.1);
+  border:1px solid rgba(124,110,249,0.2);
+  border-radius:100px;
+  padding:4px 12px;
+  font-size:11px;
+  font-weight:500;
+  color:#9d93fa;
+  letter-spacing:0.5px;
+  text-transform:uppercase;
+  margin-bottom:20px;
+}
+
+.ag-result-tag::before{
+  content:'';
+  width:6px;height:6px;
+  border-radius:50%;
+  background:#7c6ef9;
+  animation:ag1-pulse 2s infinite;
+}
+
+@keyframes ag1-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+
+.ag-result-title{
+  font-family:'Instrument Serif',serif;
+  font-size:24px;
+  font-weight:400;
+  color:#f4f4f5;
+  margin-bottom:8px;
+  line-height:1.3;
+}
+
+.ag-result-desc{font-size:14px;color:#71717a;font-weight:300;line-height:1.7;margin-bottom:24px;}
+
+.ag-result-spec{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+
+.ag-spec-item{background:#18181d;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 14px;}
+.ag-spec-label{font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#52525b;margin-bottom:4px;}
+.ag-spec-val{font-size:13px;font-weight:400;color:#c4c4cc;font-family:'JetBrains Mono',monospace;}
+
+.ag-result-actions{display:flex;gap:10px;}
+
+.ag-type-cursor{
+  display:inline-block;
+  width:2px;height:1em;
+  background:#7c6ef9;
+  margin-left:2px;
+  vertical-align:middle;
+  animation:ag1-blink 1s infinite;
+}
+
+@keyframes ag1-blink{0%,100%{opacity:1}50%{opacity:0}}
+
+.ag-progress-bar{height:2px;background:rgba(255,255,255,0.05);border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.ag-progress-fill{height:100%;background:#7c6ef9;border-radius:2px;width:0%;transition:width 0.4s ease;}
+
+/* ─── FOOTER ──────────────────────────────────────────────── */
+.kv-footer{
+  background:#0a0a0b;
+  border-top:1px solid rgba(255,255,255,0.07);
+  padding:32px 24px;
+}
+
+.kv-footer-inner{
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.kv-footer-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.kv-footer-brand-name{font-size:14px;color:#fff;font-weight:600;}
+.kv-footer-copy{font-size:12px;color:#3f3f46;}
+
+.kv-footer-links{display:flex;align-items:center;gap:4px;}
+
+.kv-footer-links a{
+  font-size:12px;
+  color:#3f3f46;
+  text-decoration:none;
+  padding:4px 10px;
+  border-radius:6px;
+  transition:color 0.15s;
+}
+
+.kv-footer-links a:hover{color:#71717a;}
+
+.kv-footer-social{display:flex;align-items:center;gap:8px;}
+
+.kv-footer-social a{
+  width:32px;height:32px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.07);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#52525b;
+  text-decoration:none;
+  font-size:13px;
+  transition:color 0.15s,border-color 0.15s;
+}
+
+.kv-footer-social a:hover{color:#a1a1aa;border-color:rgba(255,255,255,0.14);}
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ──────────────────────────────────────────── -->
+<nav class="site-nav">
+  <a href="{% url 'home' %}" class="nav-brand">Kanvas<span>AI</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'addpage' %}">Build Page</a></li>
+    <li><a href="{% url 'view_pages' %}">My Pages</a></li>
+    <li><a href="{% url 'autogenerate' %}">Generate</a></li>
+    <li><a href="{% url 'Error_Solver' %}">Code Tools</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="{% url 'addpage' %}" class="nav-cta">Start Building</a>
   </div>
-</div>
-<!-- Jumbotron -->
-{% endblock %}
+</nav>
+
+<!-- ─── MAIN ─────────────────────────────────────────────── -->
+<form id="gen-form-edit" action="{% url 'autogenerate_edit' %}" method="post" style="display:none">
+  {% csrf_token %}
+  <input type="hidden" name="query" id="form-query-edit">
+  <input type="hidden" name="ProjectName" id="form-projectname-edit">
+</form>
+
+<main class="ag-wrap">
+  <div class="ag-eyebrow">Generate &amp; Edit</div>
+  <h1 class="ag-heading">Tell us what you<br>want to <em>build</em></h1>
+  <p class="ag-sub">Answer a few quick questions and we'll generate a template you can edit right away.</p>
+
+  <div class="ag-card">
+    <div class="ag-progress-bar"><div class="ag-progress-fill" id="ag1-progress"></div></div>
+
+    <div class="q-row">
+      <div class="q-label"><span class="q-num">1</span> What are you building?</div>
+      <div class="q-options">
+        <div class="q-chip" onclick="ag1SelectChip(this,'type','portfolio')">Portfolio</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'type','landing page')">Landing page</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'type','blog')">Blog</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'type','dashboard')">Dashboard</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'type','e-commerce store')">Store</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'type','restaurant site')">Restaurant</div>
+      </div>
+    </div>
+
+    <div class="q-row">
+      <div class="q-label"><span class="q-num">2</span> What's the vibe?</div>
+      <div class="q-options">
+        <div class="q-chip" onclick="ag1SelectChip(this,'vibe','minimal and clean')">Minimal</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'vibe','bold and modern')">Bold</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'vibe','dark and elegant')">Dark</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'vibe','warm and friendly')">Warm</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'vibe','playful and colorful')">Playful</div>
+        <div class="q-chip" onclick="ag1SelectChip(this,'vibe','professional and corporate')">Corporate</div>
+      </div>
+    </div>
+
+    <div class="q-row">
+      <div class="q-label"><span class="q-num">3</span> Anything specific to include?</div>
+      <textarea class="q-textarea" id="extraInput1" rows="3" placeholder="e.g. a hero section with my photo, a contact form, dark mode toggle…"></textarea>
+    </div>
+
+    <div class="q-row" style="margin-bottom:0">
+      <div class="q-label"><span class="q-num">4</span> Project name</div>
+      <input class="q-text" id="projectNameInput1" type="text" placeholder="e.g. My Portfolio, Acme Landing…">
+    </div>
+
+    <div class="ag-divider"></div>
+
+    <div class="ag-cta">
+      <span class="ag-hint" id="ag1-hint">Pick your answers above</span>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="ag-btn ag-btn-ghost" onclick="ag1Reset()" type="button">Reset</button>
+        <button class="ag-btn ag-btn-primary" id="ag1GenBtn" onclick="ag1Generate()" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Generate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ag-result" id="ag1-result">
+    <div class="ag-result-inner">
+      <div class="ag-result-tag">Template ready</div>
+      <div class="ag-result-title" id="ag1ResultTitle"></div>
+      <div class="ag-result-desc" id="ag1ResultDesc"></div>
+      <div class="ag-result-spec" id="ag1ResultSpec"></div>
+      <div class="ag-result-actions">
+        <button class="ag-btn ag-btn-primary" style="height:40px;font-size:13px" onclick="ag1Submit()" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Open in Editor
+        </button>
+        <button class="ag-btn ag-btn-ghost" style="height:40px;font-size:13px" onclick="ag1Reset()" type="button">Try again</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────── -->
+<footer class="kv-footer">
+  <div class="kv-footer-inner">
+    <a href="{% url 'home' %}" class="kv-footer-brand">
+      <span class="kv-footer-brand-name">Kanvas<span style="color:#7c6ef9">AI</span></span>
+      <span class="kv-footer-copy">&copy; <script>document.write(new Date().getFullYear())</script> Kanvas AI</span>
+    </a>
+
+  </div>
+</footer>
+
+<script>
+(function(){
+  var state={type:'',vibe:''};
+
+  var templates={
+    'portfolio':{
+      'minimal and clean':{title:'Clean Portfolio',desc:'Single-page portfolio with a hero statement, work grid, and a quiet contact section. Lots of white space, one accent color.',specs:{Layout:'Single page',Sections:'Hero · Work · About · Contact',Style:'Minimal / Sans-serif',Color:'Monochrome + accent'}},
+      'bold and modern':{title:'Bold Portfolio',desc:'Full-bleed hero with your name in large display type, horizontal scroll project cards, and a strong typographic footer.',specs:{Layout:'Full-bleed',Sections:'Hero · Projects · Skills · Footer',Style:'Editorial / Display type',Color:'Black + neon accent'}},
+      'dark and elegant':{title:'Dark Portfolio',desc:'Dark mode portfolio with subtle particle background, card-based project grid, and smooth scroll animations.',specs:{Layout:'Dark / Single page',Sections:'Intro · Work · Stack · Contact',Style:'Elegant / Dark',Color:'#0a0a0b + violet'}},
+      'warm and friendly':{title:'Warm Portfolio',desc:'Inviting portfolio with soft earth tones, rounded cards, a personal about section, and a friendly contact form.',specs:{Layout:'Single page',Sections:'Hello · Work · About · Contact',Style:'Warm / Friendly',Color:'Cream + terracotta'}},
+      'playful and colorful':{title:'Playful Portfolio',desc:'Vibrant portfolio with bold color blocks, fun hover effects on project cards, and an energetic layout full of personality.',specs:{Layout:'Multi-color',Sections:'Hero · Projects · Fun Facts · Contact',Style:'Playful / Colorful',Color:'Multi + gradient'}},
+      'professional and corporate':{title:'Corporate Portfolio',desc:'Polished professional portfolio with structured layout, skill bars, timeline resume section, and clean contact form.',specs:{Layout:'Structured',Sections:'Summary · Skills · Experience · Contact',Style:'Professional',Color:'Navy + grey'}}
+    },
+    'landing page':{
+      'minimal and clean':{title:'Minimal Landing',desc:'Above-the-fold hero with a single CTA, three benefit cards, and a trust strip. No distractions.',specs:{Layout:'Single CTA',Sections:'Hero · Benefits · Trust · CTA',Style:'Minimal',Color:'White + one accent'}},
+      'bold and modern':{title:'Bold Landing',desc:'Split hero with animated headline, feature bento grid, and a prominent sign-up section.',specs:{Layout:'Conversion-focused',Sections:'Hero · Features · Pricing · CTA',Style:'Bold / Modern',Color:'Dark bg + gradient'}},
+      'dark and elegant':{title:'Dark Landing',desc:'Dark gradient hero, glassmorphism feature cards, animated stats bar, and a strong bottom CTA.',specs:{Layout:'Dark mode',Sections:'Hero · Stats · Features · CTA',Style:'Elegant / Dark',Color:'#0a0a0b + violet'}},
+      'warm and friendly':{title:'Warm Landing',desc:'Welcoming hero with a soft illustration, testimonials with photos, and an approachable sign-up flow.',specs:{Layout:'Story-driven',Sections:'Hero · Why Us · Testimonials · CTA',Style:'Warm / Friendly',Color:'Peach + amber'}},
+      'playful and colorful':{title:'Fun Landing',desc:'Energetic landing with confetti-style background, bold feature cards, and a playful CTA section.',specs:{Layout:'Attention-grabbing',Sections:'Hero · Features · How It Works · CTA',Style:'Playful',Color:'Rainbow + bright'}},
+      'professional and corporate':{title:'Enterprise Landing',desc:'Trust-first landing with logo strip, feature comparison table, case studies section, and a demo request form.',specs:{Layout:'Trust-focused',Sections:'Hero · Logos · Features · Case Studies · CTA',Style:'Corporate',Color:'Blue + white'}}
+    },
+    'blog':{
+      'minimal and clean':{title:'Clean Blog',desc:'Distraction-free reading experience with a magazine-style hero post, card grid, and a minimal sidebar.',specs:{Layout:'Magazine',Sections:'Featured · Posts · Tags · Newsletter',Style:'Minimal',Color:'White + black'}},
+      'bold and modern':{title:'Bold Blog',desc:'High-contrast blog with oversized category labels, full-bleed post images, and a strong typography hierarchy.',specs:{Layout:'Editorial',Sections:'Hero · Categories · Posts · Footer',Style:'Editorial / Bold',Color:'Black + accent'}},
+      'dark and elegant':{title:'Dark Blog',desc:'Sleek dark-mode blog with neon category tags, card-hover glow effects, and a newsletter section.',specs:{Layout:'Dark mode',Sections:'Featured · Posts · Newsletter',Style:'Dark / Elegant',Color:'#111 + neon'}},
+      'warm and friendly':{title:'Personal Blog',desc:'Cozy personal blog with a warm color palette, author bio strip, featured image posts, and a comment-friendly layout.',specs:{Layout:'Personal',Sections:'Hero · Posts · About Author · Newsletter',Style:'Warm',Color:'Linen + amber'}},
+      'playful and colorful':{title:'Colorful Blog',desc:'Fun blog with category color bands, illustrated headers, and a vibrant post card grid.',specs:{Layout:'Colorful grid',Sections:'Header · Categories · Posts · Subscribe',Style:'Playful',Color:'Multi-color'}},
+      'professional and corporate':{title:'Thought Leadership Blog',desc:'Corporate-style blog with clean layout, author credentials, tag-based navigation, and email capture.',specs:{Layout:'Structured',Sections:'Hero · Featured · Posts · Subscribe',Style:'Corporate',Color:'Navy + grey'}}
+    },
+    'dashboard':{
+      'minimal and clean':{title:'Minimal Dashboard',desc:'Clean analytics dashboard with a sidebar nav, KPI stat cards, a line chart area, and a data table.',specs:{Layout:'Sidebar + main',Sections:'Nav · Stats · Charts · Table',Style:'Minimal / Light',Color:'White + blue'}},
+      'bold and modern':{title:'Bold Dashboard',desc:'Modern dark dashboard with glowing stat cards, area charts, a notification panel, and a quick-actions bar.',specs:{Layout:'Full dark',Sections:'Sidebar · KPIs · Charts · Feed',Style:'Bold / Modern',Color:'#1a1a2e + electric blue'}},
+      'dark and elegant':{title:'Dark Dashboard',desc:'Elegant dark UI with glassmorphism cards, gradient charts, and a clean left-nav hierarchy.',specs:{Layout:'Dark / Elegant',Sections:'Nav · Overview · Charts · Activity',Style:'Glassmorphism',Color:'#0a0a0b + violet'}},
+      'warm and friendly':{title:'Friendly Dashboard',desc:'Approachable dashboard with warm colors, friendly stat icons, an activity timeline, and a welcome banner.',specs:{Layout:'Light / Warm',Sections:'Welcome · Stats · Activity · Tasks',Style:'Friendly',Color:'Cream + orange'}},
+      'playful and colorful':{title:'Colorful Dashboard',desc:'Vibrant dashboard with color-coded metric cards, donut charts, and a fun progress tracker section.',specs:{Layout:'Multi-color',Sections:'Nav · Metrics · Charts · Goals',Style:'Playful',Color:'Rainbow + white bg'}},
+      'professional and corporate':{title:'Enterprise Dashboard',desc:'Professional BI dashboard with role-based nav, tabular data views, export buttons, and filter controls.',specs:{Layout:'Corporate',Sections:'Nav · KPIs · Reports · Table',Style:'Professional',Color:'Grey + blue'}}
+    },
+    'e-commerce store':{
+      'minimal and clean':{title:'Minimal Store',desc:'Clean e-commerce layout with a hero banner, product grid, filter sidebar, and a streamlined cart.',specs:{Layout:'Shop grid',Sections:'Banner · Products · Filters · Cart',Style:'Minimal',Color:'White + one accent'}},
+      'bold and modern':{title:'Bold Store',desc:'High-impact storefront with a full-screen hero product shot, category scroll strip, and bold CTAs.',specs:{Layout:'Full-bleed',Sections:'Hero · Categories · Featured · Cart',Style:'Bold / Modern',Color:'Black + gold'}},
+      'dark and elegant':{title:'Luxury Store',desc:'Dark mode boutique with editorial product photography, hover reveal details, and a sleek checkout flow.',specs:{Layout:'Dark / Luxury',Sections:'Hero · Collection · Product · Cart',Style:'Elegant',Color:'#0a0a0b + gold'}},
+      'warm and friendly':{title:'Cozy Store',desc:'Warm-toned shop with lifestyle imagery, customer reviews front and center, and a personal brand feel.',specs:{Layout:'Lifestyle',Sections:'Hero · Products · Reviews · Newsletter',Style:'Warm',Color:'Cream + terracotta'}},
+      'playful and colorful':{title:'Fun Store',desc:'Playful shop with colorful product cards, fun category icons, and an energetic promo banner.',specs:{Layout:'Colorful grid',Sections:'Promo · Categories · Products · Cart',Style:'Playful',Color:'Bright multi-color'}},
+      'professional and corporate':{title:'B2B Store',desc:'Professional wholesale store with bulk pricing table, product spec sheets, and an RFQ form.',specs:{Layout:'Structured',Sections:'Products · Specs · Pricing · RFQ',Style:'Corporate',Color:'Navy + grey'}}
+    },
+    'restaurant site':{
+      'minimal and clean':{title:'Clean Restaurant',desc:'Elegant restaurant site with a full-screen hero, inline menu sections, and a reservation form.',specs:{Layout:'Single page',Sections:'Hero · Menu · About · Reservations',Style:'Minimal',Color:'White + one accent'}},
+      'bold and modern':{title:'Bold Restaurant',desc:'Vibrant food-first site with large food photography, bold section headers, and an online order CTA.',specs:{Layout:'Image-led',Sections:'Hero · Menu · Gallery · Order',Style:'Bold',Color:'Black + red'}},
+      'dark and elegant':{title:'Fine Dining Site',desc:'Sophisticated dark site with atmospheric food imagery, handwritten-style fonts, and a reservation module.',specs:{Layout:'Dark / Atmospheric',Sections:'Hero · Menu · Chef · Reservations',Style:'Elegant',Color:'#0a0a0b + gold'}},
+      'warm and friendly':{title:'Cozy Restaurant',desc:'Inviting family restaurant site with warm colors, food photography grid, and a Google Maps section.',specs:{Layout:'Warm / Family',Sections:'Hero · About · Menu · Map',Style:'Warm',Color:'Amber + cream'}},
+      'playful and colorful':{title:'Fun Eatery Site',desc:'Energetic fast-casual site with emoji-style icons, colorful menu cards, and a loyalty badge section.',specs:{Layout:'Colorful',Sections:'Hero · Menu · Deals · Loyalty',Style:'Playful',Color:'Bright yellow + red'}},
+      'professional and corporate':{title:'Restaurant Chain Site',desc:'Corporate restaurant group site with location finder, franchise info, press section, and career listings.',specs:{Layout:'Corporate / Multi-page',Sections:'Locations · Menu · Franchise · Careers',Style:'Professional',Color:'Dark blue + white'}}
+    }
+  };
+
+  var fallback={title:'Custom Template',desc:'A clean, responsive HTML template tailored to your description.',specs:{Layout:'Responsive',Sections:'Auto-generated',Style:'Modern',Color:'Neutral'}};
+
+  function getTpl(){var t=templates[state.type];return t?(t[state.vibe]||fallback):fallback;}
+
+  window.ag1SelectChip=function(el,key,val){
+    el.closest('.q-options').querySelectorAll('.q-chip').forEach(function(c){c.classList.remove('selected');});
+    el.classList.add('selected');
+    state[key]=val;
+    updateProgress();
+  };
+
+  function updateProgress(){
+    var count=(state.type?1:0)+(state.vibe?1:0);
+    document.getElementById('ag1-progress').style.width=count===2?'100%':count===1?'50%':'0%';
+    var hint=document.getElementById('ag1-hint');
+    if(!state.type)hint.textContent="Pick what you're building";
+    else if(!state.vibe)hint.textContent='Now pick the vibe';
+    else hint.textContent='Ready to generate…';
+    hint.style.color='';
+  }
+
+  function typeText(el,text,speed,cb){
+    el.innerHTML='';
+    var i=0,cursor=document.createElement('span');
+    cursor.className='ag-type-cursor';
+    el.appendChild(cursor);
+    var iv=setInterval(function(){
+      el.insertBefore(document.createTextNode(text[i]),cursor);
+      i++;
+      if(i>=text.length){clearInterval(iv);cursor.remove();if(cb)cb();}
+    },speed);
+  }
+
+  window.ag1Generate=function(){
+    if(!state.type||!state.vibe){
+      var hint=document.getElementById('ag1-hint');
+      hint.textContent='Please pick both answers first';
+      hint.style.color='#f97316';
+      setTimeout(function(){hint.style.color='';updateProgress();},2000);
+      return;
+    }
+    var extra=document.getElementById('extraInput1').value.trim();
+    var projectName=document.getElementById('projectNameInput1').value.trim();
+    var parts=['Create a '+state.type+' with a '+state.vibe+' aesthetic'];
+    if(extra)parts.push(extra);
+    document.getElementById('form-query-edit').value=parts.join('. ');
+    document.getElementById('form-projectname-edit').value=projectName||state.type.replace(/\s+/g,'_')+'_project';
+
+    var tpl=getTpl(),btn=document.getElementById('ag1GenBtn');
+    btn.disabled=true;
+    btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Generating…';
+    btn.style.opacity='0.7';
+
+    var titleEl=document.getElementById('ag1ResultTitle'),descEl=document.getElementById('ag1ResultDesc'),specEl=document.getElementById('ag1ResultSpec'),result=document.getElementById('ag1-result');
+    titleEl.innerHTML='';descEl.innerHTML='';specEl.innerHTML='';
+
+    setTimeout(function(){
+      result.classList.add('visible');
+      typeText(titleEl,tpl.title,40,function(){
+        setTimeout(function(){
+          typeText(descEl,tpl.desc,18,function(){
+            Object.entries(tpl.specs).forEach(function(entry,i){
+              setTimeout(function(){
+                var item=document.createElement('div');
+                item.className='ag-spec-item';
+                item.style.cssText='opacity:0;transform:translateY(8px);transition:opacity 0.3s ease,transform 0.3s ease';
+                item.innerHTML='<div class="ag-spec-label">'+entry[0]+'</div><div class="ag-spec-val">'+entry[1]+'</div>';
+                specEl.appendChild(item);
+                requestAnimationFrame(function(){item.style.opacity='1';item.style.transform='translateY(0)';});
+              },i*100);
+            });
+            btn.disabled=false;
+            btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Generate';
+            btn.style.opacity='1';
+          });
+        },200);
+      });
+    },800);
+  };
+
+  window.ag1Submit=function(){
+    if(!document.getElementById('form-query-edit').value){alert('Click Generate first.');return;}
+    document.getElementById('gen-form-edit').submit();
+  };
+
+  window.ag1Reset=function(){
+    state.type='';state.vibe='';
+    document.querySelectorAll('.q-chip').forEach(function(c){c.classList.remove('selected');});
+    document.getElementById('extraInput1').value='';
+    document.getElementById('projectNameInput1').value='';
+    document.getElementById('ag1-result').classList.remove('visible');
+    document.getElementById('ag1-progress').style.width='0%';
+    document.getElementById('ag1-hint').textContent='Pick your answers above';
+    document.getElementById('ag1-hint').style.color='';
+    document.getElementById('form-query-edit').value='';
+    document.getElementById('form-projectname-edit').value='';
+  };
+})();
+</script>
+</body>
+</html>

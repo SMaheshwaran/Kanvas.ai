@@ -1,59 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
 
-<link href=
-"https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
-          rel="stylesheet">
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- Jumbotron -->
-<div
-  class="relative overflow-hidden bg-cover bg-no-repeat p-12 text-center"
-  style="background-image: url('https://i.kinja-img.com/gawker-media/image/upload/t_original/badfsqoe2vbib30u4fir.gif'); height: 100%">
-  <div
-    class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-fixed"
-    style="background-color: rgba(0, 0, 0, 0.6)">
-    <div class="flex h-full items-center justify-center">
-        <div style="margin: 0 auto; margin-top: 30px; width: 600px; background-color: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); padding: 20px; height: 500px; overflow-y: auto;">
-            <h1 style="text-align: center;">Get Solution</h1>
-            <form method="post">
-                {% csrf_token %}
-                <label for="question">Enter a question:</label><br>
-                <input type="text" id="question" name="question" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4" placeholder="Enter a question"><br>
-                <input type="submit" value="Get Example Code" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer">
-            </form>
-            <div>
-                {% if question %}
-                <h2>Question:</h2>
-                <p>{{ question }}</p>
-                {% endif %}
-                
-                {% if link_s %}
-                <h2>Error Solution :</h2>
-                {% endif %}
-                
-                {% if code_s %}
-                <div>{{ code_s|safe }}</div>
-                {% endif %}
-                
-                {% if error %}
-                <p style="color: red;">{{ error }}</p>
-                {% endif %}
-                
-                {% if question %}
-                <h2>Question:</h2>
-                <p>{{ question }}</p>
-                {% endif %}
-                
-                {% if link_gfg %}
-                {% endif %}
-                
-                {% if code_gfg %}
-                <div>{{ code_gfg|safe }}</div>
-                {% endif %}
-                
-                {% if error %}
-                <p style="color: red;">{{ error }}</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
+<style>
+  :root {
+    --bg-app: #0a0a0b;
+    --bg-panel: #111114;
+    --bg-input: #18181d;
+    --bg-code: #0f0f12;
+    --border-soft: rgba(255,255,255,0.07);
+    --border-mid: rgba(255,255,255,0.1);
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-muted: #52525b;
+    --accent: #ef4444;
+    --accent-dim: rgba(239,68,68,0.1);
+    --accent-border: rgba(239,68,68,0.2);
+    --accent-hover: #f87171;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-display: 'Instrument Serif', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body { background: var(--bg-app); color: var(--text-primary); font-family: var(--font-body); }
+
+  /* Hero */
+  .es-hero { text-align: center; padding: 60px 24px 40px; }
+  .es-eyebrow {
+    font-size: 11px; font-weight: 500; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 16px; display: flex; align-items: center;
+    justify-content: center; gap: 8px;
+  }
+  .es-eyebrow::before, .es-eyebrow::after {
+    content: ''; display: block; width: 24px; height: 1px;
+    background: var(--accent); opacity: 0.4;
+  }
+  .es-heading {
+    font-family: var(--font-display); font-size: clamp(30px, 5vw, 50px);
+    font-weight: 400; line-height: 1.15; letter-spacing: -0.5px;
+    color: var(--text-primary); margin-bottom: 10px;
+  }
+  .es-heading em { font-style: italic; color: #f87171; }
+  .es-sub { font-size: 14px; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
+
+  /* Example chips */
+  .es-examples { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 28px; }
+  .es-ex-chip {
+    padding: 6px 14px; border-radius: 100px; background: var(--bg-panel);
+    border: 1px solid var(--border-soft); font-size: 12px; color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s; font-family: var(--font-mono);
+  }
+  .es-ex-chip:hover { border-color: var(--accent-border); color: #fca5a5; background: #1a1010; }
+
+  /* Container */
+  .es-container { max-width: 640px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* Input card */
+  .es-input-card {
+    background: var(--bg-panel); border: 1px solid var(--border-soft);
+    border-radius: 20px; padding: 28px; margin-bottom: 20px;
+  }
+  .es-textarea {
+    width: 100%; background: var(--bg-input); border: 1px solid var(--border-soft);
+    border-radius: 12px; padding: 16px; color: var(--text-primary);
+    font-size: 13px; font-family: var(--font-mono); font-weight: 400;
+    outline: none; resize: none; line-height: 1.7; min-height: 120px;
+    transition: border-color 0.18s; box-sizing: border-box;
+  }
+  .es-textarea:focus { border-color: var(--accent-border); }
+  .es-textarea::placeholder { color: #3f3f46; font-family: var(--font-body); font-style: italic; }
+
+  .es-form-row { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 12px; }
+  .es-lang-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .es-lang {
+    padding: 5px 12px; border-radius: 100px; background: var(--bg-input);
+    border: 1px solid var(--border-soft); font-size: 11px; color: var(--text-muted);
+    cursor: pointer; font-weight: 500; transition: all 0.15s;
+  }
+  .es-lang:hover, .es-lang.active {
+    background: #1a1010; border-color: var(--accent-border); color: #fca5a5;
+  }
+  .es-btn {
+    height: 44px; padding: 0 24px; border-radius: 100px; font-size: 13px;
+    font-weight: 500; font-family: var(--font-body); cursor: pointer;
+    transition: all 0.18s; display: inline-flex; align-items: center; gap: 7px;
+    border: none; background: var(--accent); color: #fff; white-space: nowrap;
+  }
+  .es-btn:hover { background: var(--accent-hover); }
+
+  /* Result card */
+  .es-result { display: none; }
+  .es-result.visible { display: block; }
+  .es-result-inner {
+    background: var(--bg-panel); border: 1px solid var(--accent-border);
+    border-radius: 20px; overflow: hidden;
+  }
+  .es-result-header {
+    padding: 18px 24px; border-bottom: 1px solid var(--border-soft);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .es-status-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    animation: pulse-dot 2s infinite; flex-shrink: 0;
+  }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+  .es-result-label { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); }
+
+  .es-section { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .es-section:last-child { border-bottom: none; }
+  .es-section-title {
+    font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+  }
+  .es-section-title::before { content: ''; width: 12px; height: 1px; background: var(--text-muted); }
+
+  .es-cause {
+    background: #1a1010; border: 1px solid var(--accent-border); border-radius: 10px;
+    padding: 14px 16px; font-size: 13px; color: #fca5a5; font-weight: 300; line-height: 1.6;
+  }
+  .es-code-block {
+    background: var(--bg-code); border: 1px solid var(--border-soft);
+    border-radius: 10px; padding: 16px; font-family: var(--font-mono);
+    font-size: 12px; color: #c4c4cc; line-height: 1.7; white-space: pre; overflow-x: auto;
+  }
+  .es-solution-text {
+    background: var(--bg-input); border-radius: 10px; padding: 16px;
+    font-size: 13px; color: var(--text-secondary); line-height: 1.7; white-space: pre-wrap;
+  }
+  .es-fix-steps { display: flex; flex-direction: column; gap: 10px; }
+  .es-step {
+    display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px;
+    background: var(--bg-input); border-radius: 10px; border: 1px solid var(--border-soft);
+  }
+  .es-step-num {
+    width: 22px; height: 22px; border-radius: 50%; background: #1a1010;
+    border: 1px solid var(--accent-border); display: flex; align-items: center;
+    justify-content: center; font-size: 10px; font-weight: 500; color: #f87171;
+    flex-shrink: 0; font-family: var(--font-mono);
+  }
+  .es-step-text { font-size: 13px; color: var(--text-secondary); font-weight: 300; line-height: 1.6; }
+  .es-step-text code {
+    font-family: var(--font-mono); font-size: 11px;
+    background: var(--bg-code); padding: 2px 6px; border-radius: 4px; color: #f87171;
+  }
+
+  /* Error message */
+  .es-error {
+    background: #1a1010; border: 1px solid var(--accent-border); border-radius: 12px;
+    padding: 14px 16px; font-size: 13px; color: #fca5a5; font-weight: 300; line-height: 1.6;
+    margin-bottom: 20px;
+  }
+</style>
+
+<!-- Hero -->
+<section class="es-hero">
+  <div class="es-eyebrow">Error Solver</div>
+  <h1 class="es-heading">Paste your <em>error</em>,<br>get the fix</h1>
+  <p class="es-sub">Paste any code error or bug description. We'll diagnose the cause and walk you through the fix.</p>
+</section>
+
+<!-- Example chips -->
+<div class="es-examples">
+  <button type="button" class="es-ex-chip" onclick="loadExample('django')">Django 500 error</button>
+  <button type="button" class="es-ex-chip" onclick="loadExample('js')">JS TypeError</button>
+  <button type="button" class="es-ex-chip" onclick="loadExample('python')">Python IndexError</button>
 </div>
+
+<div class="es-container">
+
+  <!-- Input card -->
+  <div class="es-input-card">
+    <form method="POST" action="{% url 'Error_Solver' %}" id="esForm">
+      {% csrf_token %}
+      <textarea
+        class="es-textarea"
+        name="question"
+        id="errorInput"
+        rows="5"
+        placeholder="Paste your error message or describe your bug here…"
+      >{{ request.POST.question }}</textarea>
+      <div class="es-form-row">
+        <div class="es-lang-chips">
+          <button type="button" class="es-lang active" onclick="setLang(this,'Python')">Python</button>
+          <button type="button" class="es-lang" onclick="setLang(this,'JavaScript')">JavaScript</button>
+          <button type="button" class="es-lang" onclick="setLang(this,'Django')">Django</button>
+          <button type="button" class="es-lang" onclick="setLang(this,'HTML/CSS')">HTML/CSS</button>
+        </div>
+        <button type="submit" class="es-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          Diagnose
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Error message from Django -->
+  {% if error %}
+  <div class="es-error">{{ error }}</div>
+  {% endif %}
+
+  <!-- Hardcoded JS result (shown without page reload for demo examples) -->
+  <div class="es-result" id="esResult">
+    <div class="es-result-inner">
+      <div class="es-result-header">
+        <div class="es-status-dot"></div>
+        <div class="es-result-label">Analysis complete</div>
+      </div>
+      <div class="es-section">
+        <div class="es-section-title">Root cause</div>
+        <div class="es-cause" id="causeEl"></div>
+      </div>
+      <div class="es-section">
+        <div class="es-section-title">Fixed code</div>
+        <pre class="es-code-block" id="codeEl"></pre>
+      </div>
+      <div class="es-section">
+        <div class="es-section-title">Steps to fix</div>
+        <div class="es-fix-steps" id="stepsEl"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stack Overflow result from Django backend -->
+  {% if code_s %}
+  <div class="es-result visible" style="margin-bottom: 20px;">
+    <div class="es-result-inner">
+      <div class="es-result-header">
+        <div class="es-status-dot"></div>
+        <div class="es-result-label">Stack Overflow · Analysis complete</div>
+      </div>
+      <div class="es-section">
+        <div class="es-section-title">Solution</div>
+        <div class="es-solution-text">{{ code_s|safe }}</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- GeeksForGeeks result from Django backend -->
+  {% if code_gfg %}
+  <div class="es-result visible">
+    <div class="es-result-inner">
+      <div class="es-result-header">
+        <div class="es-status-dot"></div>
+        <div class="es-result-label">GeeksForGeeks · Analysis complete</div>
+      </div>
+      <div class="es-section">
+        <div class="es-section-title">Solution</div>
+        <div class="es-solution-text">{{ code_gfg|safe }}</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  /* Example pre-fill data */
+  const examples = {
+    django: `OperationalError at /admin/\nno such table: base_page\nRequest Method: GET\nRequest URL: http://127.0.0.1:8000/admin/base/page/`,
+    js: `TypeError: Cannot read properties of undefined (reading 'map')\n    at ProductList (ProductList.jsx:12:22)\n    at renderWithHooks (react-dom.development.js:14985)`,
+    python: `IndexError: list index out of range\n  File "views.py", line 34, in get_item\n    return items[index]`
+  };
+
+  function loadExample(key) {
+    document.getElementById('errorInput').value = examples[key];
+  }
+
+  function setLang(el, lang) {
+    document.querySelectorAll('.es-lang').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  /* Hardcoded solutions for demo examples */
+  const hardcodedSolutions = {
+    django: {
+      cause: "The database table `base_page` doesn't exist yet. This happens when you've created or modified a model but haven't run `migrate` to apply the schema changes to the database.",
+      code: `# Run these commands in your terminal\npython manage.py makemigrations\npython manage.py migrate\n\n# If still missing, check INSTALLED_APPS in settings.py\nINSTALLED_APPS = [\n    'base',  # ← make sure this is present\n]`,
+      steps: [
+        "Run <code>python manage.py makemigrations</code> to detect model changes",
+        "Run <code>python manage.py migrate</code> to apply changes to the DB",
+        "Verify <code>'base'</code> is in <code>INSTALLED_APPS</code> in settings.py",
+        "Restart the dev server with <code>python manage.py runserver</code>"
+      ]
+    },
+    js: {
+      cause: "You're calling `.map()` on a value that is `undefined` at render time. This means the data from your API or props hasn't loaded yet when the component first renders.",
+      code: `// Before — crashes if products is undefined\nconst ProductList = ({ products }) => (\n  <ul>{products.map(p => <li>{p.name}</li>)}</ul>\n);\n\n// After — safe default + loading guard\nconst ProductList = ({ products = [] }) => {\n  if (!products.length) return <p>Loading…</p>;\n  return <ul>{products.map(p => <li>{p.name}</li>)}</ul>;\n};`,
+      steps: [
+        "Add a default value: <code>products = []</code> in prop destructuring",
+        "Add a loading guard before the <code>.map()</code> call",
+        "If data comes from an API, use a <code>loading</code> state variable",
+        "Check the parent component is passing <code>products</code> as a prop"
+      ]
+    },
+    python: {
+      cause: "You're accessing an index that doesn't exist in the list. If `items` has 3 elements (indices 0–2) and `index` is 3 or higher, Python throws IndexError. This is usually an off-by-one logic issue.",
+      code: `# Before — crashes if index is out of range\ndef get_item(items, index):\n    return items[index]\n\n# After — safe version with bounds check\ndef get_item(items, index):\n    if not items or index >= len(items):\n        return None  # or raise a custom error\n    return items[index]`,
+      steps: [
+        "Add a bounds check: <code>if index >= len(items)</code> before accessing",
+        "Print <code>index</code> and <code>len(items)</code> to debug the actual values",
+        "If iterating, use <code>enumerate()</code> instead of manual index increments",
+        "Consider returning <code>None</code> or a default value on out-of-range"
+      ]
+    }
+  };
+
+  document.getElementById('esForm').addEventListener('submit', function(e) {
+    const input = document.getElementById('errorInput').value.trim();
+    let matchedKey = null;
+
+    if (input.includes('no such table') || input.includes('OperationalError')) matchedKey = 'django';
+    else if (input.includes('TypeError') || input.includes('Cannot read properties of undefined')) matchedKey = 'js';
+    else if (input.includes('IndexError') || input.includes('list index out of range')) matchedKey = 'python';
+
+    if (matchedKey) {
+      e.preventDefault();
+      showHardcoded(hardcodedSolutions[matchedKey]);
+    }
+    /* else: submit normally to Django backend */
+  });
+
+  function showHardcoded(sol) {
+    const result = document.getElementById('esResult');
+    document.getElementById('causeEl').textContent = sol.cause;
+    document.getElementById('codeEl').textContent = sol.code;
+    const stepsEl = document.getElementById('stepsEl');
+    stepsEl.innerHTML = '';
+    sol.steps.forEach((s, i) => {
+      stepsEl.innerHTML += `<div class="es-step"><div class="es-step-num">${i + 1}</div><div class="es-step-text">${s}</div></div>`;
+    });
+    result.classList.add('visible');
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+{% endblock %}

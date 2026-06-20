@@ -7,297 +7,68 @@
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <!-- Title -->
-    <title>Nocode Tool</title>
-
-    <!-- Favicon -->
-    <link rel="icon" href=" {% static 'img/core-img/favicon.ico' %} ">
- {% comment %} ==================================================================================================== {% endcomment %}
-      <link rel="stylesheet" href=" {% static 'css/chat.css' %} ">
-      <link rel="stylesheet" href=" {% static 'css/home.css' %} ">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    {% comment %} =============================================================================================================================== {% endcomment %}
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href=" {% static 'style.css' %} ">
-
+    <title>Kanvas AI</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1a2e'/><text x='4' y='22' font-family='sans-serif' font-weight='700' font-size='14' fill='%237c6ef9'>K</text><text x='15' y='22' font-family='sans-serif' font-weight='400' font-size='10' fill='%23ffffff'>.ai</text></svg>">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+    <style>
+*{box-sizing:border-box;}
+.site-nav{position:fixed;top:0;left:0;width:100%;padding:14px 48px;z-index:200;display:flex;align-items:center;background:rgba(12,12,16,0.72);border-bottom:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);box-shadow:0 1px 24px rgba(0,0,0,0.28);}
+.nav-brand{flex:1;font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;text-decoration:none;white-space:nowrap;}
+.nav-brand span{color:#7c6ef9;}
+.site-nav .nav-links{display:flex;gap:32px;list-style:none;flex:0 0 auto;}
+.site-nav .nav-links a{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;color:rgba(255,255,255,0.52);text-decoration:none;text-transform:uppercase;letter-spacing:1.5px;transition:color 0.2s;}
+.site-nav .nav-links a:hover{color:rgba(255,255,255,0.9);}
+.nav-right{flex:1;display:flex;justify-content:flex-end;}
+.nav-cta{background:#7c6ef9;color:#fff;border:none;border-radius:20px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap;margin-left:8px;transition:background 0.2s;}
+.nav-cta:hover{background:#9080fb;}
+.kv-footer{background:#080809;border-top:1px solid rgba(255,255,255,0.06);padding:24px 0;}
+.kv-footer-inner{width:100%;max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.kv-footer-brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.kv-footer-brand-name{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:#fff;}
+.kv-footer-brand-name span{color:#7c6ef9;}
+.kv-footer-copy{font-family:'DM Sans',sans-serif;font-size:12px;color:#3f3f46;}
+@media(max-width:768px){.site-nav .nav-links{display:none;}.site-nav{padding:12px 20px;}}
+    </style>
 </head>
 
 <body>
     <!-- Preloader -->
     <div class="preloader d-flex align-items-center justify-content-center">
-        <div class="lds-ellipsis">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
+        <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
     </div>
 
-    <!-- ##### Header Area Start ##### -->
-    <header class="header-area">
-        <!-- Navbar Area -->
-        <div class="pixel-main-menu" id="sticker">
-            <div class="classy-nav-container breakpoint-off">
-                <div class="container-fluid">
-                    <!-- Menu -->
-                    <nav class="classy-navbar justify-content-between" id="pixelNav">
-
-                        <!-- Nav brand -->
-                        <a href=" {% static 'index.html' %} " class="nav-brand"><img src=" {% static 'img/core-img/logo.png' %} " alt=""></a>
-
-                        <!-- Navbar Toggler -->
-                        <div class="classy-navbar-toggler">
-                            <span class="navbarToggler"><span></span><span></span><span></span></span>
-                        </div>
-
-                        <!-- Menu -->
-                        <div class="classy-menu">
-
-                            <!-- Close Button -->
-                            <div class="classycloseIcon">
-                                <div class="cross-wrap"><span class="top"></span><span class="bottom"></span></div>
-                            </div>
-
-                            <!-- Nav Start -->
-                            <div class="classynav">
-                                <ul>
-                                    <li><a href=" {% url 'home' %} ">Home</a></li>
-                                    <li><a href=" {% url 'services' %} ">Services</a></li>
-                                    <li><a >Features</a>
-                                        <ul class="dropdown">
-                                            <li><a href=" {% url 'home' %} ">Home</a></li>
-                                            <li><a>Temp Nocode</a>
-                                                <ul class="dropdown">
-                                                    <li><a href=" {% url 'gethtml' %} ">Html To Edit</a></li>
-                                                    <li><a href=" {% url 'autogenerate_edit' %} ">Auto Gen to edit</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a>Dowmload Temp</a>
-                                                <ul class="dropdown">
-                                                    <li><a href=" {% url 'url' %} ">From Url</a></li>
-                                                    <li><a href=" {% url 'autogenerate' %} ">Auto Gen</a></li>
-                                                </ul>
-                                            </li>
-
-                                            <li><a href=" {% url 'services' %} ">Nocode</a>
-                                                <ul class="dropdown">
-                                                    <li><a href=" {% url 'addpage' %} ">Create</a></li>
-                                                    <li><a href=" {% url 'view_pages' %} ">List</a></li>
-                                                    <li><a href=" {% url 'view_pages' %} ">Manage</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a>Blogs</a>
-                                                <ul class="dropdown">
-                                                    <li><a href=" {% url 'blog_edit' %} ">Create</a></li>
-                                                    <li><a href=" {% url 'list_blog' %} ">List</a></li>
-                                                    <li><a href=" {% url 'list_edit_blog' %} ">Manage</a></li>
-                                                </ul>
-                                            </li>
-                                         
-                                            <li><a>Code Snippers</a>
-                                                <ul class="dropdown">
-                                                    <li><a href=" {% url 'Code_scriping' %} ">Code Generator</a></li>
-                                                    <li><a href=" {% url 'Error_Solver' %} ">Error Solver</a></li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-    
-                                    <li><a href=" {% url 'contact' %} ">Contact</a></li>
-                                </ul>
-
-                                <!-- Top Social Info -->
-                                <div class="top-social-info ml-5">
-                                    <a href="https://github.com/GaneshMumbai2001"><i class="fa fa-github"></i></a>
-                                    <a href="https://www.linkedin.com/in/ganesh-mumbai-b863a3203"><i class="fa fa-linkedin"></i></a>
-                                    <a href="https://twitter.com/ganesh__mumbai?t=JwSmlCKf5RWpAcMI3IB3zA&s=09"><i class="fa fa-twitter"></i></a>
-                                    <a href="https://www.facebook.com/ganesh.mumbai.12?mibextid=ZbWKwL"><i class="fa fa-facebook"></i></a>
-                                    <a href="https://instagram.com/ganeshmumbaiofficial?igshid=NTc4MTIwNjQ2YQ=="><i class="fa fa-instagram"></i></a>
-                                    <a href="https://wa.me/+916383328121"><i class="fa fa-whatsapp"></i></a>
-                                </div>
-                            </div>
-                            <!-- Nav End -->
-                        </div>
-                    </nav>
-                </div>
-            </div>
+    <!-- Header -->
+    <nav class="site-nav" id="siteNav">
+        <a href="{% url 'home' %}" class="nav-brand">Kanvas<span>AI</span></a>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'addpage' %}">Build Page</a></li>
+            <li><a href="{% url 'view_pages' %}">My Pages</a></li>
+            <li><a href="{% url 'autogenerate' %}">Generate</a></li>
+            <li><a href="{% url 'Error_Solver' %}">Code Tools</a></li>
+        </ul>
+        <div class="nav-right">
+            <a href="{% url 'addpage' %}" class="nav-cta">Start Building</a>
         </div>
-    </header>
-    <!-- ##### Header Area End ##### -->
+    </nav>
 
 
     {% block content %}
     {% endblock %}
 
 
-<!-- ##### Footer Area Start ##### -->
-<footer class="footer-area section-padding-100-0">
-    <div class="container-fluid">
-        <div class="row justify-content-between">
-
-            <!-- Single Footer Widget -->
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="single-footer-widget mb-100">
-                    <!-- Footer Logo -->
-                    <a href=" {% static 'index.html' %} " class="footer-logo"><img src=" {% static 'img/core-img/logo.png' %} " alt=""></a>
-                </div>
-            </div>
-
-            <!-- Single Footer Widget -->
-            <div class="col-12 col-md-9 col-lg-8 col-xl-7">
-                <div class="row">
-                    <!-- Single Footer Widget -->
-                    <div class="col-sm-4">
-                        <div class="single-footer-widget mb-100">
-                            <h5 class="widget-title">Address</h5>
-                            <p>Jaya Engineering College<br>Thiruninravur,Chennai</p>
-                        </div>
-                    </div>
-
-                    <!-- Single Footer Widget -->
-                    <div class="col-sm-4">
-                        <div class="single-footer-widget mb-100">
-                            <h5 class="widget-title">Support</h5>
-                            <p><i class="fa fa-phone"></i> <br>6383328121</p>
-                        </div>
-                    </div>
-
-                    <!-- Single Footer Widget -->
-                    <div class="col-sm-4">
-                        <div class="single-footer-widget mb-100">
-                            <h5 class="widget-title">Social</h5>
-                            <div class="footer-social-info">
-                                <a href="https://github.com/GaneshMumbai2001"><i class="fa fa-github"></i></a>
-                                <a href="https://www.linkedin.com/in/ganesh-mumbai-b863a3203"><i class="fa fa-linkedin"></i></a>
-                                <a href="https://twitter.com/ganesh__mumbai?t=JwSmlCKf5RWpAcMI3IB3zA&s=09"><i class="fa fa-twitter"></i></a>
-                                <a href="https://www.facebook.com/ganesh.mumbai.12?mibextid=ZbWKwL"><i class="fa fa-facebook"></i></a>
-                                <a href="https://instagram.com/ganeshmumbaiofficial?igshid=NTc4MTIwNjQ2YQ=="><i class="fa fa-instagram"></i></a>
-                                <a href="https://wa.me/+916383328121"><i class="fa fa-whatsapp"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Copywrite Area -->
-    <div class="copywrite-area">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-12 col-md-6">
-                    <div class="copywrite-content">
-                        <!-- Copywrite Text -->
-                        <p class="copywrite-text"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved @ganeshmumbai</a>
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-</p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <nav class="footer-nav">
-                        <ul>
-                            <li><a href="{% url 'home' %}">Home</a></li>
-                            <li><a href="{% url 'services' %}">Services</a></li>
-                            <li><a href="{% url 'contact' %}">Contact</a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
+<!-- Footer -->
+<footer class="kv-footer">
+    <div class="kv-footer-inner">
+        <a href="{% url 'home' %}" class="kv-footer-brand">
+            <span class="kv-footer-brand-name">Kanvas<span>AI</span></span>
+            <span class="kv-footer-copy">&copy; <script>document.write(new Date().getFullYear())</script> Kanvas AI</span>
+        </a>
     </div>
 </footer>
-<div class="chat-bar-collapsible">
-    <button id="chat-button" type="button" class="collapsible">Chat with us!
-        <i id="chat-icon" style="color: #fff;" class="fa fa-fw fa-comments-o"></i>
-    </button>
-
-    <div class="content">
-        <div class="full-chat-block" style="width:100%;">
-            <!-- Message Container -->
-            <div class="outer-container">
-                <div class="chat-container">
-                    <!-- Messages -->
-                    <div id="chatbox">
-                        <h5 id="chat-timestamp"></h5>
-                        <p id="botStarterMessage" class="botText"><span>Loading...</span></p>
-                    </div>
-
-                    <!-- User input box -->
-                    <div class="chat-bar-input-block">
-                        <div id="userInput">
-                            <input id="textInput" class="input-box" type="text" name="msg"
-                                placeholder="Tap 'Enter' to send a message">
-                            <p></p>
-                        </div>
-
-                        <div class="chat-bar-icons">
-                            <i id="chat-icon" style="color: crimson;" class="fa fa-fw fa-heart"
-                                onclick="heartButton()"></i>
-                            <i id="chat-icon" style="color: #333;" class="fa fa-fw fa-send"
-                                onclick="sendButton()"></i>
-                        </div>
-                    </div>
-
-                    <div id="chat-bar-bottom">
-                        <p></p>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-</div>
-<!-- ##### Footer Area Start ##### -->
-          {% comment %} >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Bot>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {% endcomment %}
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-          <script src=" {% static 'scripts/responses.js' %} "></script>
-          <script src=" {% static 'scripts/chat.js' %} "></script>
-          {% comment %} >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {% endcomment %}
-        
-<script>
-    var setdate = document.querySelector(".set_date");
-    var settime = document.querySelector(".set_time");
-
-    var date = new Date().toDateString();
-    setdate.innerHTML = date;
-
-
-    setInterval(function () {
-      var time = new Date().toLocaleTimeString();
-      settime.innerHTML = time;
-    }, 500);
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-      var options = {
-        damping: '0.5'
-      }
-      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-    function add_sub(id) {
-      $.ajax({
-        url: 'add_sub',
-        data: {
-          'subcode': id
-        }, success: function (data) {
-          location.reload();
-        }
-      });
-    }
-    function rm_sub(id) {
-      $.ajax({
-        url: 'rm_sub',
-        data: {
-          'subcode': id
-        }, success: function (data) {
-          location.reload();
-        }
-      });
-    }
-  </script>
     <!-- ##### All Javascript Script ##### -->
     <!-- jQuery-2.2.4 js -->
     <script src=" {% static 'js/jquery/jquery-2.2.4.min.js' %} "></script>

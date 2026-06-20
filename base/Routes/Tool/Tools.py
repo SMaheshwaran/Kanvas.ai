@@ -2,28 +2,6 @@ import requests
 import re
 from googlesearch import search
 from bs4 import BeautifulSoup
-from ...models import Blog
-
-
-def get_blog():
-    images = Blog.objects.all()
-    print(images)
-    cat = []
-    temp = []
-    items = []
-    for i in images:
-        cat.append(i.categories)
-    for i in list(set(cat)):
-        temp = []
-        for j in images:
-            if i == j.categories:
-                temp.append(j)
-        items.append(temp)
-    for x, i in enumerate(items):
-        items[x] = i[::-1]
-    return items
-
-
 def convert_youtube_link(url):
     # Regular expression pattern to match YouTube URLs
     pattern = r'(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([\w-]{11})'

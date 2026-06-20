@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from base.Routes.views import home, contact, services, hero_landing
+from base.Routes.views import home, hero_landing
 from django.conf.urls.static import static
 from TechSpeak import settings
-from base.Routes import NoCodeViews, BlogViews, AI_Functions, bot
+from base.Routes import NoCodeViews, AI_Functions, bot
 
 urlpatterns = []
 
@@ -42,17 +42,6 @@ NoCodeMaker = [
     path('preview/<id>', NoCodeViews.previewPage, name='previewPage')
 ]
 
-BlogBuilder = [
-    path('list_blog', BlogViews.list_blog,name="list_blog"),
-    path('list_edit_blog', BlogViews.list_edit_blog,name="list_edit_blog"),
-    path('view_blog/<str:pk>', BlogViews.view_blog),
-    path('edit_blog/<str:pk>', BlogViews.edit_blog),
-    path('blog_edit', BlogViews.blog_edit,name="blog_edit"),
-    path('save_blog', BlogViews.save_blog),
-    path('delete_blog', BlogViews.delete_blog),
-    path('edit_blog/save_edit_blog/<int:pk>', BlogViews.save_edit_blog),
-]
-
 AI_functions = [
     path('Code_scriping', AI_Functions.Code_scriping,name="Code_scriping"),
     path('Error_Solver', AI_Functions.Error_Solver,name="Error_Solver"),
@@ -68,9 +57,6 @@ base = [
     
     path('', home,name='home'),
     path('hero', hero_landing, name='hero_landing'),
-    path('contact', contact,name='contact'),
-    path('services', services,name='services'),
-    
     path('chatbot_res',bot.chatbot_res,name="chatbot_res"),
     
     path('gethtml',NoCodeViews.HTML_Edit,name="gethtml"),
@@ -78,7 +64,7 @@ base = [
     
 ]
 
-urlpatterns.extend(Make_Join([NoCodeMaker, BlogBuilder, AI_functions,base]))
+urlpatterns.extend(Make_Join([NoCodeMaker, AI_functions, base]))
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

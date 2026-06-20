@@ -4,9 +4,6 @@ from .NoCodeAutomate.testing import Nocode_test
 def home(request):
     return render(request,'common/index.html')
 
-def blog(request):
-    return render(request,'common/blog-single.html')
-
 def automation(request):
     if request.method == 'POST':
         name = request.POST.get('text_area')

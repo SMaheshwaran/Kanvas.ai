@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KanvasAI — Build websites. Write zero code.</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1a2e'/><text x='4' y='22' font-family='sans-serif' font-weight='700' font-size='14' fill='%237c6ef9'>K</text><text x='15' y='22' font-family='sans-serif' font-weight='400' font-size='10' fill='%23ffffff'>.ai</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
@@ -213,12 +214,12 @@
   <nav class="site-nav" id="siteNav">
     <a href="{% url 'home' %}" class="nav-brand">Kanvas<span>AI</span></a>
     <ul class="nav-links">
-      <li><a href="#features">Templates</a></li>
-      <li><a href="#features">No-Code Editor</a></li>
-      <li><a href="#features">Code Tools</a></li>
+      <li><a href="{% url 'addpage' %}">No-Code Editor</a></li>
+      <li><a href="{% url 'view_pages' %}">Templates</a></li>
+      <li><a href="{% url 'Error_Solver' %}">Code Tools</a></li>
     </ul>
     <div class="nav-right">
-      <a href="#cta" class="nav-cta">Start building</a>
+      <a href="{% url 'autogenerate_edit' %}" class="nav-cta">Start Building</a>
     </div>
   </nav>
 
@@ -236,7 +237,6 @@
 
       <div class="hero-ctas">
         <a href="{% url 'addpage' %}" class="btn-primary">Start building for free</a>
-        <a href="#" class="btn-secondary"><i class="ti ti-player-play"></i>Watch how it works</a>
       </div>
 
       <div class="trust-strip">
@@ -295,8 +295,8 @@
       <div class="stat-label">Faster than manual builds</div>
     </div>
     <div class="stat-item">
-      <div class="stat-number">8<span>+</span></div>
-      <div class="stat-label">Major user flows covered</div>
+      <div class="stat-number">80<span>+</span></div>
+      <div class="stat-label">Section variants</div>
     </div>
     <div class="stat-item">
       <div class="stat-number">3</div>
@@ -451,16 +451,6 @@
           </div>
         </div>
 
-        <div class="testimonial-card">
-          <div class="testimonial-quote">"Having the blog inside the tool is smart. I learned how to structure a grid layout and then immediately built one without leaving the tab."</div>
-          <div class="testimonial-author">
-            <div class="author-avatar" style="background: rgba(56, 180, 200, 0.2); color: #38b4c8;">DV</div>
-            <div class="author-info">
-              <h4>Dev Varma</h4>
-              <div class="author-role">Small business owner</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>

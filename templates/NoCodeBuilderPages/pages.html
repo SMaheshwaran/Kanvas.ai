@@ -1,62 +1,258 @@
 {% extends 'base.html' %}
-  {% comment %} {% extends 'NoCodeBuilderPages/base.html' %}  {% endcomment %}
-
 {% load static %}
-{% block content %}
 
-<!--
-  This example requires Tailwind CSS v2.0+ 
-  
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/aspect-ratio'),
-    ],
-  }
-  ```
--->
-{% include "NoCodeBuilderPages/base.html" %}
-<div class="bg-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="max-w-2xl mx-auto py-16 sm:py-24 lg:py-32 lg:max-w-none">
-        <div class="flex justify-between">
-            <h2 class="text-2xl font-extrabold text-gray-900">My Pages</h2>
-            <a href="/add" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <!-- Heroicon name: solid/check -->
-                Add new
-            </a>
+{% block content %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-app: #0a0a0b;
+  --bg-panel: #111114;
+  --bg-input: #18181d;
+  --border-soft: rgba(255,255,255,0.07);
+  --border-mid: rgba(255,255,255,0.1);
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+  --accent: #7c6ef9;
+  --accent-hover: #8c80fa;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Instrument Serif', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+.vp-wrap {
+  min-height: 100vh;
+  background: var(--bg-app);
+  font-family: var(--font-body);
+}
+
+.vp-header {
+  padding: 48px 32px 32px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex; align-items: flex-end;
+  justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.vp-eyebrow {
+  font-size: 10px; font-weight: 500; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+}
+.vp-title {
+  font-family: var(--font-display); font-size: 32px; font-weight: 400;
+  color: var(--text-primary); letter-spacing: -0.3px; margin: 0;
+}
+.vp-title em { font-style: italic; color: #9d93fa; }
+.vp-meta {
+  font-size: 12px; color: var(--text-muted); font-weight: 300;
+  margin-top: 6px; font-family: var(--font-mono);
+}
+.vp-add-btn {
+  height: 40px; padding: 0 20px; border-radius: 100px;
+  background: var(--accent); color: #fff; border: none;
+  font-size: 13px; font-weight: 500; font-family: var(--font-body);
+  cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+  text-decoration: none; transition: all 0.15s; white-space: nowrap;
+}
+.vp-add-btn:hover { background: var(--accent-hover); transform: translateY(-1px); color: #fff; }
+
+.vp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 28px 32px;
+}
+
+.vp-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.vp-card:hover {
+  border-color: rgba(124,110,249,0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.vp-card:hover .vp-card-overlay { opacity: 1; }
+
+.vp-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  position: relative;
+  overflow: hidden;
+  background: #0f0f12;
+  flex-shrink: 0;
+}
+
+.vp-card-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10,10,11,0.7);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  opacity: 0; transition: opacity 0.2s;
+}
+.vp-ov-btn {
+  height: 32px; padding: 0 14px; border-radius: 100px;
+  font-size: 11px; font-weight: 500; font-family: var(--font-body);
+  cursor: pointer; border: none; display: inline-flex; align-items: center;
+  gap: 5px; transition: all 0.15s; text-decoration: none;
+}
+.vp-ov-edit { background: var(--accent); color: #fff; }
+.vp-ov-edit:hover { background: var(--accent-hover); color: #fff; }
+.vp-ov-preview {
+  background: rgba(255,255,255,0.1); color: #f4f4f5;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.vp-ov-preview:hover { background: rgba(255,255,255,0.18); color: #f4f4f5; }
+
+.vp-card-body { padding: 14px 16px; flex: 1; }
+.vp-card-type {
+  font-size: 9px; font-weight: 500; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 5px; display: flex; align-items: center; gap: 5px;
+}
+.vp-card-type-dot {
+  width: 5px; height: 5px; border-radius: 50%; display: inline-block;
+}
+.vp-card-name {
+  font-size: 14px; font-weight: 500; color: #e4e4e7;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 10px;
+}
+
+.vp-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; border-top: 1px solid rgba(255,255,255,0.05);
+}
+.vp-card-date {
+  font-size: 10px; color: #3f3f46;
+  font-family: var(--font-mono);
+}
+.vp-card-actions { display: flex; gap: 6px; }
+.vp-icon-btn {
+  width: 26px; height: 26px; border-radius: 6px; background: transparent;
+  border: 1px solid var(--border-soft); display: flex; align-items: center;
+  justify-content: center; cursor: pointer; transition: all 0.12s;
+  color: var(--text-muted); text-decoration: none;
+}
+.vp-icon-btn:hover {
+  background: #1e1a3a; border-color: rgba(124,110,249,0.3); color: #9d93fa;
+}
+
+.vp-empty {
+  grid-column: 1 / -1; text-align: center; padding: 60px 24px;
+}
+.vp-empty-text { font-size: 14px; color: var(--text-muted); }
+.vp-empty-text a { color: var(--accent); text-decoration: none; }
+</style>
+
+<div class="vp-wrap">
+  <div class="vp-header">
+    <div class="vp-header-left">
+      <div class="vp-eyebrow">No-Code Builder</div>
+      <h1 class="vp-title">My <em>Pages</em></h1>
+      <div class="vp-meta">{{ pages|length }} page{{ pages|length|pluralize }} total</div>
+    </div>
+    <a href="{% url 'addpage' %}" class="vp-add-btn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add new page
+    </a>
+  </div>
+
+  <div class="vp-grid">
+    {% for page in pages %}
+    <div class="vp-card">
+      <div class="vp-thumb">
+        <svg class="vp-thumb-svg" data-name="{{ page.name }}" data-id="{{ page.id }}"
+          viewBox="0 0 200 125" xmlns="http://www.w3.org/2000/svg"
+          width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+        </svg>
+        <div class="vp-card-overlay">
+          <a href="{% url 'editpage' page.id %}" class="vp-ov-btn vp-ov-edit">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit
+          </a>
+          <a href="{% url 'previewPage' page.id %}" class="vp-ov-btn vp-ov-preview">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview
+          </a>
         </div>
-        <div class="mt-6 space-y-12 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-x-6">
-        
-            {% if pages %}
-                {% for page in pages %}
-                <div>
-                  <div class="group relative mb-8">
-                    <div class="relative w-full h-80 bg-white rounded-lg overflow-hidden group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
-                      <img src="{{ page.image }}" alt="Desk with leather desk pad, walnut desk organizer, wireless keyboard and mouse, and porcelain mug." class="w-full h-full object-center object-cover">
-                    </div>
-                    <h3 class="mt-6 text-sm text-gray-500">
-                      <a href="/edit/{{ page.id }}">
-                        <span class="absolute inset-0"></span>
-                        {{ page.name }}
-                      </a>
-                    </h3>
-                    <p class="text-base font-semibold text-gray-900">{{ page.decsription }}</p>
-                  </div>
-                  <a href="/preview/{{page.id}}">Preview</a>
-                </div>
-                {% endfor %}
-            {% endif %}
-            
+      </div>
+      <div class="vp-card-body">
+        <div class="vp-card-type">
+          <span class="vp-card-type-dot" data-id="{{ page.id }}"></span>
+          Page
+        </div>
+        <div class="vp-card-name">{{ page.name }}</div>
+      </div>
+      <div class="vp-card-footer">
+        <span class="vp-card-date">ID {{ page.id }}</span>
+        <div class="vp-card-actions">
+          <a href="{% url 'editpage' page.id %}" class="vp-icon-btn" title="Edit">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </a>
+          <a href="{% url 'previewPage' page.id %}" class="vp-icon-btn" title="Preview">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </a>
         </div>
       </div>
     </div>
+    {% empty %}
+    <div class="vp-empty">
+      <div class="vp-empty-text">No pages yet. <a href="{% url 'addpage' %}">Create your first page →</a></div>
+    </div>
+    {% endfor %}
   </div>
-  
+</div>
+
+<script>
+(function() {
+  var palette = [
+    { color: '#7c6ef9', accent: '#c4bffe' },
+    { color: '#f59e0b', accent: '#fcd34d' },
+    { color: '#10b981', accent: '#6ee7b7' },
+    { color: '#3b82f6', accent: '#93c5fd' },
+    { color: '#ec4899', accent: '#f9a8d4' },
+    { color: '#ef4444', accent: '#fca5a5' },
+    { color: '#06b6d4', accent: '#67e8f9' },
+    { color: '#84cc16', accent: '#bef264' }
+  ];
+
+  var layouts = ['landing', 'portfolio', 'form', 'cards', 'dashboard'];
+
+  function makeSVGContent(layout, color, accent) {
+    var bg = '#0f0f12';
+    var s = 'rgba(255,255,255,0.06)';
+    var sm = 'rgba(255,255,255,0.1)';
+
+    var map = {
+      landing: '<rect width="200" height="125" fill="' + bg + '"/><rect x="0" y="0" width="200" height="50" fill="' + color + '" opacity="0.12"/><rect x="60" y="14" width="80" height="7" rx="3.5" fill="' + color + '" opacity="0.8"/><rect x="75" y="25" width="50" height="4" rx="2" fill="' + accent + '" opacity="0.4"/><rect x="80" y="34" width="40" height="8" rx="4" fill="' + color + '" opacity="0.9"/><rect x="16" y="58" width="48" height="5" rx="2.5" fill="' + sm + '"/><rect x="16" y="66" width="38" height="3" rx="1.5" fill="' + s + '"/><rect x="16" y="73" width="44" height="3" rx="1.5" fill="' + s + '"/><rect x="74" y="56" width="52" height="22" rx="6" fill="' + color + '" opacity="0.08" stroke="' + color + '" stroke-width="0.5" stroke-opacity="0.3"/><rect x="134" y="56" width="50" height="22" rx="6" fill="' + color + '" opacity="0.06" stroke="' + color + '" stroke-width="0.5" stroke-opacity="0.2"/><rect x="16" y="84" width="168" height="1" fill="' + s + '"/><rect x="70" y="90" width="60" height="3" rx="1.5" fill="' + s + '"/>',
+
+      portfolio: '<rect width="200" height="125" fill="' + bg + '"/><rect x="16" y="14" width="60" height="55" rx="5" fill="' + color + '" opacity="0.15" stroke="' + color + '" stroke-width="0.5" stroke-opacity="0.4"/><rect x="84" y="14" width="100" height="24" rx="3" fill="' + sm + '"/><rect x="84" y="42" width="70" height="5" rx="2.5" fill="' + color + '" opacity="0.7"/><rect x="84" y="51" width="55" height="3" rx="1.5" fill="' + s + '"/><rect x="84" y="58" width="40" height="3" rx="1.5" fill="' + s + '"/><rect x="16" y="76" width="52" height="20" rx="4" fill="' + color + '" opacity="0.08" stroke="' + color + '" stroke-width="0.5" stroke-opacity="0.25"/><rect x="74" y="76" width="52" height="20" rx="4" fill="' + color + '" opacity="0.06" stroke="' + sm + '" stroke-width="0.5"/><rect x="132" y="76" width="52" height="20" rx="4" fill="' + color + '" opacity="0.06" stroke="' + sm + '" stroke-width="0.5"/><rect x="16" y="102" width="168" height="1" fill="' + s + '"/><rect x="70" y="108" width="60" height="3" rx="1.5" fill="' + s + '"/>',
+
+      form: '<rect width="200" height="125" fill="' + bg + '"/><rect x="40" y="10" width="120" height="105" rx="8" fill="#111114" stroke="' + color + '" stroke-width="0.5" stroke-opacity="0.3"/><rect x="70" y="18" width="60" height="7" rx="3.5" fill="' + color + '" opacity="0.7"/><rect x="60" y="29" width="80" height="3" rx="1.5" fill="' + s + '"/><rect x="56" y="38" width="88" height="9" rx="4.5" fill="' + bg + '" stroke="' + sm + '" stroke-width="0.5"/><rect x="56" y="52" width="88" height="9" rx="4.5" fill="' + bg + '" stroke="' + sm + '" stroke-width="0.5"/><rect x="56" y="66" width="88" height="9" rx="4.5" fill="' + bg + '" stroke="' + color + '" stroke-width="0.5" stroke-opacity="0.4"/><rect x="68" y="82" width="64" height="9" rx="4.5" fill="' + color + '" opacity="0.85"/><rect x="74" y="97" width="52" height="3" rx="1.5" fill="' + s + '"/>',
+
+      cards: '<rect width="200" height="125" fill="' + bg + '"/><rect x="16" y="10" width="100" height="6" rx="3" fill="' + sm + '"/><rect x="16" y="24" width="52" height="38" rx="5" fill="' + color + '" opacity="0.12" stroke="' + color + '" stroke-width="0.5" stroke-opacity="0.3"/><rect x="74" y="24" width="52" height="38" rx="5" fill="' + color + '" opacity="0.08" stroke="' + sm + '" stroke-width="0.5"/><rect x="132" y="24" width="52" height="38" rx="5" fill="' + color + '" opacity="0.08" stroke="' + sm + '" stroke-width="0.5"/><rect x="16" y="68" width="168" height="1" fill="' + s + '"/><rect x="16" y="78" width="168" height="6" rx="3" fill="' + s + '"/><rect x="16" y="88" width="120" height="4" rx="2" fill="' + s + '"/><rect x="16" y="97" width="150" height="4" rx="2" fill="' + s + '"/>',
+
+      dashboard: '<rect width="200" height="125" fill="' + bg + '"/><rect x="16" y="10" width="36" height="20" rx="4" fill="' + color + '" opacity="0.15"/><rect x="58" y="10" width="36" height="20" rx="4" fill="' + color + '" opacity="0.1"/><rect x="100" y="10" width="36" height="20" rx="4" fill="' + color + '" opacity="0.08"/><rect x="142" y="10" width="42" height="20" rx="4" fill="' + color + '" opacity="0.06"/><rect x="16" y="38" width="104" height="48" rx="4" fill="#111114" stroke="' + sm + '" stroke-width="0.5"/><polyline points="24,78 44,62 64,68 84,52 104,58 120,46" fill="none" stroke="' + color + '" stroke-width="1.5" opacity="0.7"/><rect x="128" y="38" width="56" height="22" rx="4" fill="#111114" stroke="' + sm + '" stroke-width="0.5"/><rect x="128" y="64" width="56" height="22" rx="4" fill="#111114" stroke="' + sm + '" stroke-width="0.5"/><rect x="16" y="92" width="168" height="1" fill="' + s + '"/><rect x="16" y="99" width="80" height="3" rx="1.5" fill="' + s + '"/>'
+    };
+    return map[layout] || map.landing;
+  }
+
+  document.querySelectorAll('.vp-thumb-svg').forEach(function(svg) {
+    var id = parseInt(svg.dataset.id) || 0;
+    var p = palette[id % palette.length];
+    var layout = layouts[id % layouts.length];
+    svg.innerHTML = makeSVGContent(layout, p.color, p.accent);
+
+    var dot = svg.closest('.vp-card').querySelector('.vp-card-type-dot');
+    if (dot) dot.style.background = p.color;
+  });
+})();
+</script>
 
 {% endblock %}
