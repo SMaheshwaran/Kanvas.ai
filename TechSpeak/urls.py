@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from base.Routes.views import home, about, contact, services
+from base.Routes.views import home, contact, services, hero_landing
 from django.conf.urls.static import static
 from TechSpeak import settings
 from base.Routes import NoCodeViews, BlogViews, AI_Functions, bot
@@ -67,7 +67,7 @@ base = [
     path('Download_file', NoCodeViews.Download_file, name='Download_file'),
     
     path('', home,name='home'),
-    path('about', about,name='about'),
+    path('hero', hero_landing, name='hero_landing'),
     path('contact', contact,name='contact'),
     path('services', services,name='services'),
     

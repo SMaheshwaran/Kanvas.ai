@@ -1,59 +1,517 @@
 {% extends 'NoCodeBuilderPages/base.html' %} {% block content %}
 <style>
-  .parent_builder {
-    background-color: #444;
+  /* ── App shell ── */
+  .nc-app {
+    display: grid;
+    grid-template-columns: 248px 1fr 280px;
+    grid-template-rows: 48px 1fr;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--bg-app);
   }
 
-  #blocks {
-    width: 15%;
+  /* ── Topbar ── */
+  .nc-topbar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-soft);
+    padding: 0 12px;
+    gap: 8px;
+    z-index: 100;
   }
 
-  #stylesElements {
-    width: 20%;
+  .nc-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px 0 4px;
+    margin-right: 4px;
+    border-right: 1px solid var(--border-soft);
+    height: 32px;
+    flex-shrink: 0;
+  }
+  .nc-logo-mark {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent) 0%, #5a4dd6 100%);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 11px;
+    color: #fff;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .nc-logo-text {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: -0.2px;
+    color: var(--text-primary);
+  }
+
+  .nc-top-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border-soft);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  .nc-top-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .nc-file-input {
+    height: 30px;
+    width: 200px;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-soft);
+    color: var(--text-primary);
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.12s;
+  }
+  .nc-file-input:focus    { border-color: var(--accent-border); }
+  .nc-file-input::placeholder { color: var(--text-muted); }
+
+  .nc-save-btn {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.12s;
+    white-space: nowrap;
+  }
+  .nc-save-btn:hover { background: var(--accent-hover); }
+
+  /* GrapesJS panel elements inside topbar */
+  .panel__basic-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .panel__devices {
+    display: flex;
+    align-items: center;
+    background: var(--bg-input);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 2px;
+    overflow: hidden;
+  }
+  .panel__switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Left sidebar (blocks + layers) ── */
+  .nc-sidebar {
+    background: var(--bg-panel);
+    border-right: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar tabs ── */
+  .nc-sidebar-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-soft);
+    padding: 0;
+    flex-shrink: 0;
+  }
+  .nc-sidebar-tab {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-tertiary);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: color 0.12s, border-color 0.12s, background 0.12s;
+  }
+  .nc-sidebar-tab:hover { color: var(--text-secondary); background: var(--bg-hover); }
+  .nc-sidebar-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent);
+  }
+
+  .nc-tab-panel {
+    flex: 1;
+    overflow-y: auto;
+    display: none;
+  }
+  .nc-tab-panel.active { display: flex; flex-direction: column; }
+
+  /* ── Canvas ── */
+  .nc-canvas {
+    background: var(--bg-canvas);
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
+    overflow: hidden;
+    position: relative;
   }
 
   #gjs {
-    width: 65%;
-    position: sticky;
-    top: 0;
+    width: 100%;
+    height: 100%;
   }
 
-  .gjs-pn-panel {
-    position: relative !important;
+  /* ── Inspector (right — traits + styles) ── */
+  .nc-inspector {
+    background: var(--bg-panel);
+    border-left: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .nc-inspector-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-soft);
+    padding: 8px 10px 0;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .nc-inspector-tab {
+    padding: 8px 12px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: none;
+    cursor: pointer;
+    transition: color 0.12s, border-color 0.12s;
+  }
+  .nc-inspector-tab:hover  { color: var(--text-secondary); }
+  .nc-inspector-tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent);
+  }
+
+  .nc-inspector-section {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    flex-shrink: 0;
+  }
+  .nc-inspector-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+  }
+
+  .nc-stylemanager-wrap {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  /* ── JSON Modal ── */
+  .nc-json-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: ncFadeIn 0.15s ease;
+  }
+  @keyframes ncFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .nc-json-card {
+    width: 640px;
+    max-width: 90vw;
+    max-height: 82vh;
+    background: var(--bg-panel-2);
+    border: 1px solid var(--border-mid);
+    border-radius: 12px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(124,110,249,0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: ncSlideIn 0.16s cubic-bezier(.22,.68,0,1.2);
+  }
+  @keyframes ncSlideIn {
+    from { transform: translateY(10px) scale(0.98); opacity:0; }
+    to   { transform: translateY(0)    scale(1);    opacity:1; }
+  }
+
+  /* header */
+  .nc-json-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-soft);
+    flex-shrink: 0;
+  }
+  .nc-json-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.1px;
+  }
+  .nc-json-title svg { color: var(--accent); flex-shrink: 0; }
+  .nc-json-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+    flex-shrink: 0;
+  }
+  .nc-json-close:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+  /* scrollable body */
+  .nc-json-body {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg-app);
+    padding: 16px 20px;
+    position: relative;
+  }
+  .nc-json-body::-webkit-scrollbar { width: 6px; }
+  .nc-json-body::-webkit-scrollbar-track { background: transparent; }
+  .nc-json-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 6px; }
+
+  .nc-json-pre {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+  /* simple token colours */
+  .nc-json-pre .j-key    { color: #8ec7f5; }
+  .nc-json-pre .j-str    { color: #9ece6a; }
+  .nc-json-pre .j-num    { color: #f7a854; }
+  .nc-json-pre .j-bool   { color: #bb9af7; }
+  .nc-json-pre .j-null   { color: var(--text-muted); }
+
+  /* footer CTAs */
+  .nc-json-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--border-soft);
+    background: var(--bg-panel);
+    flex-shrink: 0;
+  }
+  .nc-json-status {
+    margin-right: auto;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+  .nc-json-btn {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border-mid);
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.12s;
+    font-family: var(--font-body);
+  }
+  .nc-json-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-strong); }
+  .nc-json-btn.accent {
+    background: var(--accent);
+    border-color: transparent;
+    color: #fff;
+  }
+  .nc-json-btn.accent:hover { background: var(--accent-hover); }
+  .nc-json-btn.success {
+    background: rgba(34,197,94,0.15);
+    border-color: rgba(34,197,94,0.3);
+    color: #22c55e;
   }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/grapesjs-touch@0.1.1/dist/grapesjs-touch.min.js"></script>
-<div class="panel__top flex justify-between w-full p-4" style="display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: center;
-    align-items: center;">
-  <div class="panel__basic-actions"></div>
-  <div class="panel__devices"></div>
-  <div class="panel__switcher flex justify-center">
-    <form onsubmit="saveContent(event)">
-      {% csrf_token %}
-      <input type="text" name="Project_name" placeholder="Enter File Name" id="Project_name" class="bg-transparent border-b border-gray-300 outline-none focus:border-blue-500 pb-1 placeholder-gray-400::placeholder">
 
-      <button class="text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" type="submit">Save</button>
-    </form>
+<script src="https://cdn.jsdelivr.net/npm/grapesjs-touch@0.1.1/dist/grapesjs-touch.min.js"></script>
+
+<div class="nc-app">
+
+  <!-- ── TOPBAR ── -->
+  <header class="nc-topbar">
+    <!-- Logo → home -->
+    <a href="/" class="nc-logo" style="text-decoration:none;">
+      <div class="nc-logo-mark">K</div>
+      <span class="nc-logo-text">Kanvas</span>
+    </a>
+
+    <!-- GrapesJS undo/redo -->
+    <div class="panel__basic-actions"></div>
+
+    <div class="nc-top-divider"></div>
+
+    <!-- Center: device toggle + file name + save -->
+    <div class="nc-top-center">
+      <div class="panel__devices"></div>
+      <div class="nc-top-divider"></div>
+      <div class="panel__switcher">
+        <form onsubmit="saveContent(event)" style="display:flex;align-items:center;gap:8px;">
+          {% csrf_token %}
+          <input type="text" name="Project_name" placeholder="Untitled file" id="Project_name" class="nc-file-input">
+          <button type="submit" class="nc-save-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save
+          </button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── LEFT SIDEBAR ── -->
+  <aside class="nc-sidebar">
+    <div class="nc-sidebar-tabs">
+      <button class="nc-sidebar-tab" id="nc-tab-layers" onclick="ncSidebarTab('layers')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Layers
+      </button>
+      <button class="nc-sidebar-tab active" id="nc-tab-components" onclick="ncSidebarTab('components')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Components
+      </button>
+    </div>
+
+    <!-- Layers panel -->
+    <div class="nc-tab-panel" id="nc-panel-layers">
+      <div class="layers-container" style="flex:1;"></div>
+    </div>
+
+    <!-- Components panel -->
+    <div class="nc-tab-panel active" id="nc-panel-components">
+      <div id="blocks" style="flex:1;"></div>
+    </div>
+  </aside>
+
+  <!-- ── CANVAS ── -->
+  <main class="nc-canvas">
+    <div id="gjs">
+      {% comment %} {% if page %}
+      {{ page.html|safe }}
+      {% endif %} {% endcomment %}
+    </div>
+  </main>
+
+  <!-- ── JSON MODAL ── -->
+  <div id="nc-json-modal" class="nc-json-overlay" style="display:none;" onclick="if(event.target===this)ncCloseJson()">
+    <div class="nc-json-card">
+      <!-- Header -->
+      <div class="nc-json-header">
+        <div class="nc-json-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+          </svg>
+          Components JSON
+        </div>
+        <button class="nc-json-close" onclick="ncCloseJson()" title="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Scrollable body -->
+      <div class="nc-json-body">
+        <pre class="nc-json-pre" id="nc-json-pre"></pre>
+      </div>
+
+      <!-- Footer CTAs -->
+      <div class="nc-json-footer">
+        <span class="nc-json-status" id="nc-json-size"></span>
+        <button class="nc-json-btn" id="nc-copy-btn" onclick="ncCopyJson()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          Copy
+        </button>
+        <button class="nc-json-btn accent" onclick="ncShareJson()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+          Share / Download
+        </button>
+      </div>
+    </div>
   </div>
-</div>
-<div class="parent_builder flex justify-between items-start">
-  <div id="blocks" class="h-full">
-    <div class="layers-container"></div>
-  </div>
-  <div id="gjs">
-    {% comment %} {% if page %}
-    {{ page.html|safe }}
-    {% endif %} {% endcomment %}
-  </div>
-  <div class="flex flex-col" id="stylesElements">
-    <div class="traits-container"></div>
-    <div class="styles-container"></div>
-    <div id="stylemanager" class="h-full"></div>
-  </div>
+
+  <!-- ── RIGHT INSPECTOR ── -->
+  <aside class="nc-inspector">
+    <div class="nc-inspector-tabs">
+      <button class="nc-inspector-tab active" onclick="document.querySelectorAll('.nc-inspector-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Design</button>
+      <button class="nc-inspector-tab" onclick="document.querySelectorAll('.nc-inspector-tab').forEach(t=>t.classList.remove('active'));this.classList.add('active')">Traits</button>
+    </div>
+    <div class="nc-inspector-section">
+      <div class="nc-inspector-section-label">Component Traits</div>
+      <div class="traits-container"></div>
+    </div>
+    <div class="nc-inspector-section">
+      <div class="nc-inspector-section-label">CSS Selector</div>
+      <div class="styles-container"></div>
+    </div>
+    <div class="nc-stylemanager-wrap">
+      <div id="stylemanager"></div>
+    </div>
+  </aside>
+
 </div>
 <script defer>
   const editor = grapesjs.init({
@@ -91,28 +549,6 @@
     // Avoid any default panel
     panels: {
       defaults: [
-        // ...
-        {
-          id: "panel-switcher",
-          el: ".panel__switcher",
-          buttons: [
-            {
-              id: "show-layers",
-              active: true,
-              label: "Layers",
-              command: "show-layers",
-              // Once activated disable the possibility to turn it off
-              togglable: false,
-            },
-            {
-              id: "show-style",
-              active: true,
-              label: "Styles",
-              command: "show-styles",
-              togglable: false,
-            },
-          ],
-        },
         {
           id: "panel-devices",
           el: ".panel__devices",
@@ -187,22 +623,10 @@
       appendTo: "#blocks",
       blocks: [
         {
-          id: "section", // id is mandatory
-          label: "<b>Section</b>", // You can use HTML/SVG inside labels
+          id: "section",
+          label: "Section",
           attributes: { class: "gjs-block-section" },
-          content: `<section>
-                      <h1>This is a simple title</h1>
-                      <div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
-                    </section>`
-        }]
-    },
-    blockManager: {
-      appendTo: "#blocks",
-      blocks: [
-        {
-          id: "section", // id is mandatory
-          label: "<b>Section</b><img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFRmWtO1zrO6tt35ewAJOE9NpAb8yiwhbrBWyxjVQCZw&s'>", // You can use HTML/SVG inside labels
-          attributes: { class: "gjs-block-section" },
+          category: "Basic",
           content: `<section>
                       <h1>This is a simple title</h1>
                       <div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
@@ -211,23 +635,21 @@
         {
           id: "text",
           label: "Text",
+          category: "Basic",
           content: '<div data-gjs-type="text">Insert your text here</div>',
         },
         {
           id: "image",
           label: "Image",
-          // Select the component once it's dropped
+          category: "Basic",
           select: true,
-          // You can pass components as a JSON instead of a simple HTML string,
-          // in this case we also use a defined component type `image`
           content: { type: "image" },
-          // This triggers `active` event on dropped components and the `image`
-          // reacts by opening the AssetManager
           activate: true,
         },
         {
           id: 'form-1',
           label: 'Form 1',
+          category: "Basic",
           attributes: { class: '' },
           content: `
           <section class="flex flex-col md:flex-row h-screen items-center">
@@ -368,8 +790,7 @@
           `
         }, {
           id: 'Single_Post_Blog',
-          label: `Single_Post_Blog
-          <img src='https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80`,
+          label: `Blog Post`,
           attributes: { clas: '' },
           category: "GRID",
           content: `<!-- component -->
@@ -408,8 +829,7 @@
 </section>`
         }, {
           id: 'Form_grid',
-          label: `Form_grid
-          <img src =https://tailwindcomponents.com/storage/868/conversions/temp38132-thumb.jpg'`,
+          label: `Form Grid`,
           attributes: { clas: '' },
           category: "GRID",
           content: `<!-- component -->
@@ -471,8 +891,7 @@
         },
         {
           id: 'cards',
-          label: `cards
-          <img src =https://tailwindcomponents.com/storage/6940/conversions/temp89530-thumb.jpg'`,
+          label: `Cards`,
           attributes: { clas: '' },
           category: "GRID",
           content: `<!-- component -->
@@ -573,10 +992,9 @@
         },
         {
           id: 'sidebar',
-          label: `sidebar
-        <img src = https://tailwindcomponents.com/storage/7124/conversions/temp20066-thumb.jpg'`,
+          label: `Sidebar`,
           attributes: { clas: '' },
-          category: "menu",
+          category: "MENU",
           content: ` <!-- component -->
 <!-- This is an example component -->
 <div class="max-w-2xl mx-auto">
@@ -683,10 +1101,9 @@
 </div>`
         }, {
           id: 'LANDING-page',
-          label: `LANDING-PAGE
-          <img src='https://tailwindcomponents.com/storage/7311/conversions/temp58717-thumb.jpg'`,
+          label: `Landing Page`,
           attributes: { clas: '' },
-          category: "menu",
+          category: "MENU",
           content: `<!-- component -->
 <div class="relative py-16 bg-gradient-to-br from-sky-50 to-gray-200">  
     <div class="relative container m-auto px-6 text-gray-500 md:px-12 xl:px-40">
@@ -752,7 +1169,7 @@
         },
         {
           id: 'pdfviewver',
-          label: `pdfviewver<img src='https://tailwindcomponents.com/storage/7758/conversions/temp38848-thumb.jpg'`,
+          label: `pdfviewver`,
           attributes: { clas: '' },
           category: "MENU",
           content: `<!-- component -->
@@ -784,8 +1201,7 @@
 
         }, {
           id: 'hambuger_animation',
-          label: `hamburger_animation
-          <img src='https://tailwindcomponents.com/storage/7927/conversions/temp76743-thumb.jpg'`,
+          label: `Hamburger Menu`,
           attributes: { clas: '' },
           category: "MENU",
           content: `<!-- component -->
@@ -801,8 +1217,7 @@
         },
         {
           id: 'navigation-bar',
-          label: `<navigation-bar
-          <img src='https://tailwindcomponents.com/storage/6344/conversions/temp40117-thumb.jpg'`,
+          label: `Navbar`,
           attributes: { clas: '' },
           category: "MENU",
           content: `<!-- component -->
@@ -951,7 +1366,7 @@
         },
         {
           id: 'navbarselection',
-          label: `navbarselection<img src='https://tailwindcomponents.com/storage/4360/conversions/temp16590-thumb.jpg'`,
+          label: `navbarselection`,
           attributes: { clas: '' },
           category: "MENU",
           content: `<!-- component -->
@@ -1035,8 +1450,7 @@
         },
         {
           id: 'simple-menu',
-          label: `simplemenu
-          <img src='https://tailwindcomponents.com/storage/3681/conversions/temp68648-thumb.jpg'`,
+          label: `Simple Menu`,
           attributes: { clas: '' },
           category: "MENU",
           content: `<!-- component -->
@@ -1067,8 +1481,7 @@
 
         }, {
           id: 'animatedtab',
-          label: `animatedtab
-          <img src='https://tailwindcomponents.com/storage/8543/conversions/temp83335-thumb.jpg'`,
+          label: `Animated Tab`,
           attributes: { clas: '' },
           category: "TAB",
           content: `<!-- component -->
@@ -1114,8 +1527,7 @@
 
         }, {
           id: 'fullwidth-tab',
-          label: `fullwidth-tab
-          <img src='https://tailwindcomponents.com/storage/8414/conversions/temp20311-thumb.jpg'`,
+          label: `Full Width Tab`,
           attributes: { clas: '' },
           category: "TAB",
           content: `<!-- component -->
@@ -1248,7 +1660,7 @@
         },
         {
           id: 'vertical-timeline',
-          label: `<img src='https://tailwindcomponents.com/storage/2240/conversions/temp42270-thumb.jpg'`,
+          label: `Vertical Timeline`,
           attributes: { clas: '' },
           category: "TAB",
           content: `<!-- component -->
@@ -1361,7 +1773,7 @@
 
         }, {
           id: 'frame_mockup',
-          label: `frame-mockup<img src='https://tailwindcomponents.com/storage/1670/conversions/temp97208-thumb.jpg'`,
+          label: `frame-mockup`,
           attributes: { clas: '' },
           category: "TAB",
           content: `<!-- component -->
@@ -1480,7 +1892,7 @@
 
         }, {
           id: 'color-selection',
-          label: `color-selection<img src='https://tailwindcomponents.com/storage/6077/conversions/temp66927-thumb.jpg'`,
+          label: `color-selection`,
           attributes: { clas: '' },
           category: "TAB",
           content: `<!-- component -->
@@ -1530,7 +1942,7 @@
 
         }, {
           id: 'AVATAR-SIZES',
-          label: `<img src='https://tailwindcomponents.com/storage/8772/conversions/temp66386-thumb.jpg'`,
+          label: `Avatar Sizes`,
           attributes: { clas: '' },
           category: "IMAGES",
           content: `<!-- component -->
@@ -1566,7 +1978,7 @@
 
         }, {
           id: 'CSSAVATAR',
-          label: `CSSAVATAR<img src='https://tailwindcomponents.com/storage/8773/conversions/temp15678-thumb.jpg'`,
+          label: `CSSAVATAR`,
           attributes: { clas: '' },
           category: "IMAGES",
           content: `<!-- component -->
@@ -1594,7 +2006,7 @@
 
         }, {
           id: 'STRIPED_TABLE',
-          label: `STRIPED_TABLE<img src='https://tailwindcomponents.com/storage/8277/conversions/temp44481-thumb.jpg'`,
+          label: `STRIPED_TABLE`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -1686,7 +2098,7 @@
 
         }, {
           id: 'Cards-table',
-          label: `cards-table<img src='https://tailwindcomponents.com/storage/4867/conversions/temp96687-thumb.jpg'`,
+          label: `cards-table`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -1918,7 +2330,7 @@
 
         }, {
           id: 'Invoice-table',
-          label: `Invoice-table<img src='https://tailwindcomponents.com/storage/9053/conversions/temp21680-thumb.jpg'`,
+          label: `Invoice-table`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -2213,7 +2625,7 @@
 
         }, {
           id: 'filter_search',
-          label: `filter_search<img src='https://tailwindcomponents.com/storage/9054/conversions/temp85646-thumb.jpg'`,
+          label: `filter_search`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -2570,7 +2982,7 @@
 
         }, {
           id: 'multi-line-table',
-          label: `multi-line-table<img src='https://tailwindcomponents.com/storage/8416/conversions/temp41738-thumb.jpg'`,
+          label: `multi-line-table`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3002,7 +3414,7 @@
 
         }, {
           id: 'HOVERBOARD-TABLE',
-          label: `HOVER-BOARD<img src="https://tailwindcomponents.com/storage/8278/conversions/temp82596-thumb.jpg" class="hover:opacity-75 transition duration-300">`,
+          label: `Hover Board`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3094,7 +3506,7 @@
 
         }, {
           id: 'SIMPLE-TABLE',
-          label: `SIMPLE-TABLE<img src='https://tailwindcomponents.com/storage/6481/conversions/temp49705-thumb.jpg'`,
+          label: `SIMPLE-TABLE`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3145,7 +3557,7 @@
 
         }, {
           id: 'COLORED-TABLE',
-          label: `COLORED=TABLE<img src='https://tailwindcomponents.com/storage/6961/conversions/temp57439-thumb.jpg'`,
+          label: `COLORED=TABLE`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3276,7 +3688,7 @@
 
         }, {
           id: 'customers-table',
-          label: `customer-table<img src='https://tailwindcomponents.com/storage/5415/conversions/temp29285-thumb.jpg'`,
+          label: `customer-table`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3402,7 +3814,7 @@
 
         }, {
           id: 'table-user-role',
-          label: `table-user-role<img src='https://tailwindcomponents.com/storage/5736/conversions/temp38330-thumb.jpg'`,
+          label: `table-user-role`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3459,7 +3871,7 @@
 
         }, {
           id: 'RESPONSIBLE-TABLE',
-          label: `RESPONSIBLE-TABLE<img src='https://tailwindcomponents.com/storage/4998/conversions/temp30424-thumb.jpg'`,
+          label: `RESPONSIBLE-TABLE`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3523,7 +3935,7 @@
 
         }, {
           id: 'USER-ROLE-TABLE',
-          label: `USER-ROLE-TABLE<img src='https://tailwindcomponents.com/storage/5739/conversions/temp20931-thumb.jpg'`,
+          label: `USER-ROLE-TABLE`,
           attributes: { clas: '' },
           category: "TABLES",
           content: `<!-- component -->
@@ -3644,7 +4056,7 @@
 
         }, {
           id: 'FORGET-PASSWORD',
-          label: `FORGET-PASSWORD<img src='https://tailwindcomponents.com/storage/7338/conversions/temp36508-thumb.jpg'`,
+          label: `FORGET-PASSWORD`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -3694,7 +4106,7 @@
 
         }, {
           id: 'profile-model',
-          label: `profile=model<img src='https://tailwindcomponents.com/storage/9128/conversions/temp60523-thumb.jpg'`,
+          label: `profile=model`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -3730,7 +4142,7 @@
 
         }, {
           id: 'simple-model',
-          label: `simple-model<img src='https://tailwindcomponents.com/storage/8001/conversions/temp64087-thumb.jpg'`,
+          label: `simple-model`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -3744,7 +4156,7 @@
 
         }, {
           id: 'aswome-login-page',
-          label: `aswome-login-page<img src='https://tailwindcomponents.com/storage/2830/conversions/temp22899-thumb.jpg'`,
+          label: `aswome-login-page`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -3801,7 +4213,7 @@
 
         }, {
           id: 'model',
-          label: `model<img src='https://tailwindcomponents.com/storage/3339/conversions/temp84709-thumb.jpg'`,
+          label: `model`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -3912,7 +4324,7 @@
 
         }, {
           id: 'notification-card',
-          label: `notification-card<img src='https://tailwindcomponents.com/storage/4139/conversions/temp20557-thumb.jpg'`,
+          label: `notification-card`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -3958,7 +4370,7 @@
 
         }, {
           id: 'emotion-diaolog-card',
-          label: `emotion-dialog-card<img src='https://tailwindcomponents.com/storage/1919/conversions/temp70372-thumb.jpg'`,
+          label: `emotion-dialog-card`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -3985,7 +4397,7 @@
 
         }, {
           id: 'rating-popup',
-          label: `<img src='https://tailwindcomponents.com/storage/1811/conversions/temp72142-thumb.jpg'`,
+          label: ``,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -4035,7 +4447,7 @@
         },
         {
           id: 'alert-components',
-          label: `alert-componets <img src='https://tailwindcomponents.com/storage/2533/conversions/temp71500-thumb.jpg'`,
+          label: `alert-componets`,
           attributes: { clas: '' },
           category: "MODELS",
           content: `<!-- component -->
@@ -4283,9 +4695,9 @@
 
         }, {
           id: 'CART-ICON',
-          label: `CART-ICON<img src='https://tailwindcomponents.com/storage/8478/conversions/temp10512-thumb.jpg'>`,
+          label: `CART-ICON`,
           attributes: { clas: '' },
-          category: "BADGESS",
+          category: "BADGES",
           content: `<!-- component -->
 <div class="h-screen bg-gray-100 flex justify-center items-center">
     <div class="relative py-2">
@@ -4300,7 +4712,7 @@
 
         }, {
           id: 'EXPANDING',
-          label: `EXPANDING<img src='https://tailwindcomponents.com/storage/7856/conversions/temp17233-thumb.jpg'>`,
+          label: `EXPANDING`,
           attributes: { clas: '' },
           category: "BADGES",
           content: `<!-- component -->
@@ -4325,7 +4737,7 @@
 
         }, {
           id: 'MAC-TERMINAL',
-          label: `<img src=`,
+          label: ``,
           attributes: { clas: '' },
           category: "WIDGET",
           content: `<!-- component -->
@@ -4397,13 +4809,7 @@
         label: "JSON",
         context: "show-json",
         command(editor) {
-          editor.Modal.setTitle("Components JSON")
-            .setContent(
-              `<textarea style="width:100%; height: 250px;">
-                    ${JSON.stringify(editor.getComponents())}
-                </textarea>`
-            )
-            .open();
+          ncOpenJson(JSON.stringify(editor.getComponents()));
         },
       },
     ],
@@ -4468,6 +4874,135 @@
   editor.Commands.add("set-device-mobile", {
     run: (editor) => editor.setDevice("Mobile"),
   });
+
+  // ── Block placeholder thumbnails ──────────────────────────────────────────
+  const _m = {
+    bars: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="7"  width="44" height="4" rx="2" fill="currentColor" opacity=".5"/>
+      <rect x="6" y="16" width="34" height="4" rx="2" fill="currentColor" opacity=".35"/>
+      <rect x="6" y="25" width="39" height="4" rx="2" fill="currentColor" opacity=".25"/>
+    </svg>`,
+    form: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="5"  width="44" height="7"  rx="2" stroke="currentColor" stroke-width="1.2" opacity=".4"/>
+      <rect x="6" y="16" width="44" height="7"  rx="2" stroke="currentColor" stroke-width="1.2" opacity=".4"/>
+      <rect x="17" y="27" width="22" height="6"  rx="3" fill="currentColor" opacity=".4"/>
+    </svg>`,
+    image: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="4" width="44" height="28" rx="2" stroke="currentColor" stroke-width="1.4" opacity=".4"/>
+      <circle cx="17" cy="14" r="4" fill="currentColor" opacity=".4"/>
+      <path d="M6 28 L20 16 L32 24 L40 18 L50 28" stroke="currentColor" stroke-width="1.4" opacity=".4" stroke-linejoin="round"/>
+    </svg>`,
+    text: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="6"  width="16" height="5" rx="2" fill="currentColor" opacity=".55"/>
+      <rect x="6" y="15" width="44" height="3" rx="1.5" fill="currentColor" opacity=".3"/>
+      <rect x="6" y="21" width="44" height="3" rx="1.5" fill="currentColor" opacity=".25"/>
+      <rect x="6" y="27" width="30" height="3" rx="1.5" fill="currentColor" opacity=".2"/>
+    </svg>`,
+    grid: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5"  y="4"  width="21" height="13" rx="2" fill="currentColor" opacity=".3"/>
+      <rect x="30" y="4"  width="21" height="13" rx="2" fill="currentColor" opacity=".3"/>
+      <rect x="5"  y="20" width="21" height="13" rx="2" fill="currentColor" opacity=".3"/>
+      <rect x="30" y="20" width="21" height="13" rx="2" fill="currentColor" opacity=".3"/>
+    </svg>`,
+    nav: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="6" width="46" height="10" rx="2" fill="currentColor" opacity=".15"/>
+      <circle cx="12" cy="11" r="3" fill="currentColor" opacity=".55"/>
+      <rect x="24" y="9" width="9" height="3" rx="1.5" fill="currentColor" opacity=".4"/>
+      <rect x="36" y="9" width="9" height="3" rx="1.5" fill="currentColor" opacity=".4"/>
+      <rect x="5"  y="21" width="46" height="2.5" rx="1.2" fill="currentColor" opacity=".12"/>
+      <rect x="5"  y="27" width="30" height="2.5" rx="1.2" fill="currentColor" opacity=".08"/>
+    </svg>`,
+    tab: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5"  y="5" width="14" height="7" rx="2" fill="currentColor" opacity=".5"/>
+      <rect x="21" y="7" width="14" height="5" rx="2" fill="currentColor" opacity=".2"/>
+      <rect x="37" y="7" width="13" height="5" rx="2" fill="currentColor" opacity=".2"/>
+      <rect x="5"  y="14" width="46" height="18" rx="2" fill="currentColor" opacity=".1"/>
+      <rect x="9"  y="20" width="30" height="2.5" rx="1.2" fill="currentColor" opacity=".2"/>
+      <rect x="9"  y="26" width="20" height="2.5" rx="1.2" fill="currentColor" opacity=".15"/>
+    </svg>`,
+    table: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="4" width="46" height="7" rx="2" fill="currentColor" opacity=".5"/>
+      <rect x="5" y="14" width="46" height="5" rx="1" fill="currentColor" opacity=".2"/>
+      <rect x="5" y="22" width="46" height="5" rx="1" fill="currentColor" opacity=".15"/>
+      <rect x="5" y="30" width="46" height="4" rx="1" fill="currentColor" opacity=".1"/>
+      <line x1="22" y1="4"  x2="22" y2="34" stroke="currentColor" stroke-width=".8" opacity=".15"/>
+      <line x1="38" y1="4"  x2="38" y2="34" stroke="currentColor" stroke-width=".8" opacity=".15"/>
+    </svg>`,
+    modal: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="9" y="3" width="38" height="30" rx="2.5" stroke="currentColor" stroke-width="1.4" opacity=".3"/>
+      <rect x="9" y="3" width="38" height="9"  rx="2.5" fill="currentColor" opacity=".3"/>
+      <rect x="14" y="17" width="28" height="3" rx="1.5" fill="currentColor" opacity=".2"/>
+      <rect x="18" y="24" width="20" height="5" rx="2.5" fill="currentColor" opacity=".3"/>
+    </svg>`,
+    badge: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5"  y="13" width="20" height="10" rx="5" fill="currentColor" opacity=".4"/>
+      <rect x="29" y="13" width="15" height="10" rx="5" fill="currentColor" opacity=".25"/>
+      <circle cx="10" cy="18" r="3.5" fill="currentColor" opacity=".6"/>
+    </svg>`,
+    widget: `<svg viewBox="0 0 56 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5"  y="4"  width="46" height="28" rx="2.5" stroke="currentColor" stroke-width="1.2" opacity=".25"/>
+      <rect x="5"  y="4"  width="46" height="9"  rx="2.5" fill="currentColor" opacity=".18"/>
+      <rect x="9"  y="18" width="24" height="3"  rx="1.5" fill="currentColor" opacity=".2"/>
+      <rect x="9"  y="24" width="16" height="3"  rx="1.5" fill="currentColor" opacity=".15"/>
+    </svg>`,
+  };
+
+  const _blockMedia = {
+    'section':           _m.widget,
+    'text':              _m.text,
+    'image':             _m.image,
+    'form-1':            _m.form,
+    'form2':             _m.form,
+    'Single_Post_Blog':  _m.grid,
+    'Form_grid':         _m.grid,
+    'cards':             _m.grid,
+    'sidebar':           _m.nav,
+    'LANDING-page':      _m.nav,
+    'pdfviewver':        _m.tab,
+    'hambuger_animation':_m.nav,
+    'navigation-bar':    _m.nav,
+    'navbarselection':   _m.nav,
+    'simple-menu':       _m.nav,
+    'animatedtab':       _m.tab,
+    'fullwidth-tab':     _m.tab,
+    'vertical-timeline': _m.tab,
+    'frame_mockup':      _m.widget,
+    'color-selection':   _m.badge,
+    'AVATAR-SIZES':      _m.image,
+    'CSSAVATAR':         _m.image,
+    'STRIPED_TABLE':     _m.table,
+    'Cards-table':       _m.table,
+    'COLORED-TABLE':     _m.table,
+    'customers-table':   _m.table,
+    'table-user-role':   _m.table,
+    'RESPONSIBLE-TABLE': _m.table,
+    'USER-ROLE-TABLE':   _m.table,
+    'FORGET-PASSWORD':   _m.form,
+    'profile-model':     _m.modal,
+    'simple-model':      _m.modal,
+    'aswome-login-page': _m.form,
+    'model':             _m.modal,
+    'notification-card': _m.modal,
+    'emotion-diaolog-card': _m.modal,
+    'rating-popup':      _m.modal,
+    'alert-components':  _m.badge,
+    'CART-ICON':         _m.badge,
+    'EXPANDING':         _m.badge,
+    'MAC-TERMINAL':      _m.widget,
+    // extra blocks not previously mapped
+    'Invoice-table':     _m.table,
+    'filter_search':     _m.table,
+    'multi-line-table':  _m.table,
+    'HOVERBOARD-TABLE':  _m.table,
+    'SIMPLE-TABLE':      _m.table,
+  };
+
+  Object.entries(_blockMedia).forEach(([id, media]) => {
+    const block = editor.BlockManager.get(id);
+    if (block) block.set('media', media);
+  });
+  // ─────────────────────────────────────────────────────────────────────────
+
   function saveContent(e) {
     e.preventDefault()
     console.log(editor.getHtml(), editor.getCss());
@@ -4496,5 +5031,87 @@
     })
   }
 
+</script>
+<script>
+  function ncSidebarTab(panel) {
+    document.querySelectorAll('.nc-sidebar-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nc-tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('nc-tab-' + panel).classList.add('active');
+    document.getElementById('nc-panel-' + panel).classList.add('active');
+  }
+
+  // ── JSON Modal ────────────────────────────────────────────────────────────
+  let _ncRawJson = '';
+
+  function ncSyntaxHighlight(json) {
+    // simple regex-based highlighting
+    return json
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+        if (/^"/.test(m)) {
+          if (/:$/.test(m)) return `<span class="j-key">${m}</span>`;
+          return `<span class="j-str">${m}</span>`;
+        }
+        if (/true|false/.test(m)) return `<span class="j-bool">${m}</span>`;
+        if (/null/.test(m))       return `<span class="j-null">${m}</span>`;
+        return `<span class="j-num">${m}</span>`;
+      });
+  }
+
+  function ncOpenJson(rawJson) {
+    _ncRawJson = rawJson;
+    let pretty;
+    try { pretty = JSON.stringify(JSON.parse(rawJson), null, 2); }
+    catch(e) { pretty = rawJson; }
+    document.getElementById('nc-json-pre').innerHTML = ncSyntaxHighlight(pretty);
+    const kb = (new Blob([rawJson]).size / 1024).toFixed(1);
+    document.getElementById('nc-json-size').textContent = `${kb} KB`;
+    document.getElementById('nc-json-modal').style.display = 'flex';
+    // reset copy button
+    const cb = document.getElementById('nc-copy-btn');
+    cb.className = 'nc-json-btn';
+    cb.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+  }
+
+  function ncCloseJson() {
+    document.getElementById('nc-json-modal').style.display = 'none';
+  }
+
+  function ncCopyJson() {
+    const btn = document.getElementById('nc-copy-btn');
+    navigator.clipboard.writeText(_ncRawJson).then(() => {
+      btn.className = 'nc-json-btn success';
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+      setTimeout(() => {
+        btn.className = 'nc-json-btn';
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy`;
+      }, 2200);
+    }).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = _ncRawJson;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    });
+  }
+
+  function ncShareJson() {
+    const blob = new Blob([_ncRawJson], { type: 'application/json' });
+    const file = new File([blob], 'components.json', { type: 'application/json' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: 'Components JSON', text: 'Kanvas component data' });
+    } else {
+      // fallback: download
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'components.json';
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 </script>
 {% endblock %}

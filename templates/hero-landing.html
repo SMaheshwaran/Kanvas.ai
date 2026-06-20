@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KanvasAI — Build websites. Write zero code.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0b;
+      color: #e2e0dc;
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.6;
+      font-size: 15px;
+      overflow-x: hidden;
+    }
+
+    /* ── Particle Canvas ── */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      display: block;
+    }
+
+    /* ── Nav ── */
+    .kv-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      background: #0a0a0b;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+
+    .kv-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: -0.5px;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .kv-logo span {
+      color: #7c6ef9;
+    }
+
+    .kv-nav-links {
+      display: flex;
+      gap: 26px;
+      list-style: none;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.48);
+    }
+
+    .kv-nav-links a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .kv-nav-links a:hover {
+      color: #fff;
+    }
+
+    .kv-nav-r {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #7c6ef9;
+      border: none;
+      color: #fff;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-primary:hover {
+      background: #9080fb;
+    }
+
+    /* ── Hero ── */
+    .hero-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      padding-top: 60px;
+    }
+
+    .kv-hero {
+      padding: 40px;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #7c6ef9;
+      border: 1px solid rgba(124, 110, 249, 0.28);
+      padding: 5px 14px;
+      border-radius: 40px;
+      margin-bottom: 26px;
+      background: rgba(124, 110, 249, 0.06);
+    }
+
+    .kv-h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(34px, 5vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .kv-h1 .acc {
+      color: #7c6ef9;
+    }
+
+    .kv-h1 .dim {
+      color: rgba(255, 255, 255, 0.38);
+    }
+
+    .kv-sub {
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.48);
+      line-height: 1.65;
+      max-width: 500px;
+      margin: 0 auto 34px;
+      font-weight: 300;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .cta-main {
+      background: #7c6ef9;
+      border: none;
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .cta-main:hover {
+      background: #9080fb;
+    }
+
+    .cta-sec {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+    }
+
+    .cta-sec:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.3);
+      flex-wrap: wrap;
+    }
+
+    .tdot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      display: inline-block;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .kv-nav {
+        padding: 14px 20px;
+      }
+
+      .kv-nav-links {
+        display: none;
+      }
+
+      .hero-wrapper {
+        padding-top: 60px;
+      }
+
+      .kv-hero {
+        padding: 20px;
+      }
+
+      .kv-h1 {
+        font-size: clamp(28px, 4vw, 48px);
+      }
+
+      .kv-sub {
+        font-size: 14px;
+      }
+
+      .hero-ctas {
+        gap: 8px;
+      }
+
+      .cta-main,
+      .cta-sec {
+        padding: 12px 24px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Particle Canvas -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- Navbar -->
+  <nav class="kv-nav">
+    <a href="{% url 'home' %}" class="kv-logo">Kanvas<span>AI</span></a>
+    <ul class="kv-nav-links">
+      <li><a href="{% url 'gethtml' %}">Templates</a></li>
+      <li><a href="{% url 'view_pages' %}">No-Code Editor</a></li>
+      <li><a href="{% url 'Code_scriping' %}">Code Tools</a></li>
+    </ul>
+    <div class="kv-nav-r">
+      <a href="{% url 'addpage' %}" class="btn-primary">Start building</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero-wrapper">
+    <section class="kv-hero">
+      <div class="eyebrow">No-code · AI-powered · Free to start</div>
+      <h1 class="kv-h1">
+        Build websites.<br>
+        <span class="dim">Write zero code.</span><br>
+        <span class="acc">Ship what you imagine.</span>
+      </h1>
+      <p class="kv-sub">Kanvas AI gives you templates, a visual editor, a code generator, and an AI assistant — all in one place. No technical background required.</p>
+      
+      <div class="hero-ctas">
+        <a href="{% url 'addpage' %}" class="cta-main">Start building for free</a>
+      </div>
+
+      <div class="trust-row">
+        <span>Free to start</span>
+        <span class="tdot"></span>
+        <span>No credit card</span>
+        <span class="tdot"></span>
+        <span>Export HTML, CSS or JSON</span>
+        <span class="tdot"></span>
+        <span>Works on any device</span>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ── Particle Animation ──
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas size to viewport
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Particle configuration
+    const particleConfig = {
+      count: 60,
+      minSize: 2,
+      maxSize: 3,
+      minOpacity: 0.3,
+      maxOpacity: 0.5,
+      minSpeed: 0.1,
+      maxSpeed: 0.5,
+      connectionDistance: 120,
+      connectionOpacity: 0.08,
+    };
+
+    // Initialize particles
+    let particles = [];
+
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < particleConfig.count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * (particleConfig.maxSize - particleConfig.minSize) + particleConfig.minSize,
+          opacity: Math.random() * (particleConfig.maxOpacity - particleConfig.minOpacity) + particleConfig.minOpacity,
+          vx: (Math.random() - 0.5) * particleConfig.maxSpeed,
+          vy: (Math.random() - 0.5) * particleConfig.maxSpeed,
+          baseOpacity: Math.random() * (particleConfig.maxOpacity - particleConfig.minOpacity) + particleConfig.minOpacity,
+        });
+      }
+    }
+
+    function updateParticles() {
+      particles.forEach((particle) => {
+        // Update position
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        // Wrap around screen
+        if (particle.x < 0) particle.x = canvas.width;
+        if (particle.x > canvas.width) particle.x = 0;
+        if (particle.y < 0) particle.y = canvas.height;
+        if (particle.y > canvas.height) particle.y = 0;
+      });
+    }
+
+    function drawParticles() {
+      // Clear canvas with semi-transparent background for trail effect
+      ctx.fillStyle = '#0a0a0b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw connection lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < particleConfig.connectionDistance) {
+            const opacity = (1 - distance / particleConfig.connectionDistance) * particleConfig.connectionOpacity;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw particles
+      particles.forEach((particle) => {
+        ctx.fillStyle = `rgba(255, 255, 255, ${particle.baseOpacity})`;
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function animate() {
+      updateParticles();
+      drawParticles();
+      requestAnimationFrame(animate);
+    }
+
+    // Initialize and start animation
+    createParticles();
+    animate();
+  </script>
+
+</body>
+</html>

@@ -87,9 +87,6 @@ def home(request):
     return render(request, 'index.html')
 
 
-def about(request):
-    return render(request, 'about-us.html')
-
 def get_stackoverflow_link(question, site='stackoverflow.com'):
 
     num_results = 30

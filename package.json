@@ -1,0 +1,9 @@
+{
+  "name": "No-Code",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "venv/bin/python manage.py runserver"
+  },
+  "dependencies": {}
+}
