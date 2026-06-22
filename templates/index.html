@@ -206,6 +206,75 @@
       .footer-bottom { grid-template-columns: 1fr; }
       .footer-rights { text-align: left; }
     }
+
+    /* ── Scroll margin for fixed navbar ── */
+    #who-its-for, #built-with, #comparison, #faq { scroll-margin-top: 100px; }
+
+    /* ── New section shared layout ── */
+    .wif-section, .built-with-section, .comparison-section, .faq-section { padding: 120px 24px; }
+    @media (max-width: 768px) {
+      .wif-section, .built-with-section, .comparison-section, .faq-section { padding: 80px 24px; }
+    }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-eyebrow { display: block; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8a93; margin-bottom: 24px; }
+    .section-eyebrow-center { text-align: center; }
+
+    /* ── A: Who It's For ── */
+    .wif-heading { text-align: center; margin-bottom: 64px; }
+    .wif-heading h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 44px); color: #f5f5f7; max-width: 760px; margin: 0 auto 16px; line-height: 1.15; }
+    .wif-heading p { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 16px; color: #8a8a93; max-width: 620px; margin: 0 auto; }
+    .wif-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    @media (max-width: 768px) { .wif-grid { grid-template-columns: 1fr; } }
+    .wif-card { border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 32px; background: transparent; transition: border-color 0.2s ease; }
+    .wif-card:hover { border-color: rgba(124,110,249,0.4); }
+    .wif-icon { color: #7c6ef9; font-size: 32px; margin-bottom: 20px; }
+    .wif-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; color: #f5f5f7; margin-bottom: 12px; }
+    .wif-card p { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 15px; color: #8a8a93; line-height: 1.6; }
+
+    /* ── B: Built With ── */
+    .bw-header { margin-bottom: 48px; }
+    .bw-header h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 44px); color: #f5f5f7; max-width: 720px; margin: 0 0 16px; line-height: 1.15; }
+    .bw-header p { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 16px; color: #8a8a93; max-width: 580px; }
+    .bw-badges { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .bw-badge { display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 20px; background: transparent; }
+    .bw-badge i { color: #f5f5f7; font-size: 20px; }
+    .bw-badge span { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 14px; color: #f5f5f7; }
+    .bw-note { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 14px; color: #8a8a93; }
+
+    /* ── C: Comparison ── */
+    .cmp-heading { text-align: center; margin-bottom: 64px; }
+    .cmp-heading h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 44px); color: #f5f5f7; max-width: 760px; margin: 0 auto 16px; line-height: 1.15; }
+    .cmp-heading p { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 16px; color: #8a8a93; max-width: 620px; margin: 0 auto; }
+    .cmp-table { width: 100%; border-collapse: collapse; }
+    .cmp-table th, .cmp-table td { padding: 0 20px; height: 64px; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .cmp-table th:first-child, .cmp-table td:first-child { text-align: left; }
+    .cmp-table th, .cmp-table td:not(:first-child) { text-align: center; }
+    .cmp-table th { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .cmp-table th:nth-child(2) { color: #8a8a93; }
+    .cmp-table th:nth-child(3) { color: #7c6ef9; background: rgba(124,110,249,0.04); }
+    .cmp-table td:first-child { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 16px; color: #f5f5f7; }
+    .cmp-table td:nth-child(2) { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 15px; color: #8a8a93; }
+    .cmp-table td:nth-child(3) { font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: 15px; color: #7c6ef9; background: rgba(124,110,249,0.04); }
+    @media (max-width: 768px) {
+      .cmp-table thead { display: none; }
+      .cmp-table, .cmp-table tbody, .cmp-table tr, .cmp-table td { display: block; }
+      .cmp-table tr { border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; margin-bottom: 12px; padding: 16px; }
+      .cmp-table td { height: auto; padding: 8px 0; border: none; text-align: left !important; background: transparent !important; }
+      .cmp-table td[data-label]::before { content: attr(data-label); display: block; font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #8a8a93; margin-bottom: 4px; }
+    }
+
+    /* ── D: FAQ ── */
+    .faq-heading { text-align: center; margin-bottom: 64px; }
+    .faq-heading h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(28px, 4vw, 44px); color: #f5f5f7; max-width: 760px; margin: 0 auto 16px; line-height: 1.15; }
+    .faq-heading p { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 16px; color: #8a8a93; max-width: 580px; margin: 0 auto; }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .faq-question { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; cursor: pointer; gap: 16px; }
+    .faq-question span { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 17px; color: #f5f5f7; }
+    .faq-icon { font-size: 22px; color: #8a8a93; flex-shrink: 0; transition: transform 0.2s ease; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+    .faq-answer { font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 15px; color: #8a8a93; line-height: 1.6; max-width: 680px; overflow: hidden; max-height: 0; transition: max-height 0.2s ease, padding 0.2s ease; padding-bottom: 0; }
+    .faq-item.open .faq-answer { max-height: 300px; padding-bottom: 24px; }
   </style>
 </head>
 <body>
@@ -374,6 +443,34 @@
     </div>
   </section>
 
+  <!-- Who It's For -->
+  <section id="who-its-for" class="wif-section">
+    <div class="section-inner">
+      <span class="section-eyebrow section-eyebrow-center">Who it's for</span>
+      <div class="wif-heading">
+        <h2>Built for the people closest to the idea.</h2>
+        <p>Whether you're learning, designing, or shipping — Kanvas AI removes the part of web development that gets in the way.</p>
+      </div>
+      <div class="wif-grid">
+        <div class="wif-card">
+          <div class="wif-icon"><i class="ti ti-book-2"></i></div>
+          <h3>Students learning web dev</h3>
+          <p>Skip the syntax wall. See how layouts come together visually, then dig into the generated code when you're ready to learn the why.</p>
+        </div>
+        <div class="wif-card">
+          <div class="wif-icon"><i class="ti ti-pencil-minus"></i></div>
+          <h3>Designers who don't code</h3>
+          <p>Ship your designs without a developer handoff. Drag, style, export — and your work lands on the web exactly as you intended.</p>
+        </div>
+        <div class="wif-card">
+          <div class="wif-icon"><i class="ti ti-rocket"></i></div>
+          <h3>Founders prototyping fast</h3>
+          <p>Test an idea this weekend, not next quarter. Generate a landing page, wire up a contact form, and put it in front of users by Monday.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- How It Works Section -->
   <section id="how-it-works" class="how-it-works">
     <span class="how-eyebrow">How it works</span>
@@ -408,6 +505,83 @@
           <p>Your projects are saved and listed under Nocode. Export as HTML, CSS, or JSON. Clean output that works in any browser.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Built With -->
+  <section id="built-with" class="built-with-section">
+    <div class="section-inner">
+      <span class="section-eyebrow">Built with</span>
+      <div class="bw-header">
+        <h2>Open architecture. Built on proven tools.</h2>
+        <p>No black box. Kanvas AI is built on technologies you already trust, with output you can take anywhere.</p>
+      </div>
+      <div class="bw-badges">
+        <div class="bw-badge"><i class="ti ti-brand-python"></i><span>Python</span></div>
+        <div class="bw-badge"><i class="ti ti-server"></i><span>Django</span></div>
+        <div class="bw-badge"><i class="ti ti-cpu"></i><span>NLP / AI</span></div>
+        <div class="bw-badge"><i class="ti ti-layout-grid"></i><span>GrapesJS</span></div>
+        <div class="bw-badge"><i class="ti ti-brand-javascript"></i><span>JavaScript</span></div>
+        <div class="bw-badge"><i class="ti ti-world-download"></i><span>Web Scraping</span></div>
+      </div>
+      <p class="bw-note">Export your work as clean HTML, CSS, or JSON — no lock-in, no proprietary format.</p>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section id="comparison" class="comparison-section">
+    <div class="section-inner">
+      <span class="section-eyebrow section-eyebrow-center">The difference</span>
+      <div class="cmp-heading">
+        <h2>Six hours of setup. Or six minutes.</h2>
+        <p>Here's what changes when the tooling stops getting in your way.</p>
+      </div>
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Traditional dev</th>
+            <th>Kanvas AI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Criteria">Time to first page</td>
+            <td data-label="Traditional dev">6–10 hours</td>
+            <td data-label="Kanvas AI">Under 10 minutes</td>
+          </tr>
+          <tr>
+            <td data-label="Criteria">Coding skill required</td>
+            <td data-label="Traditional dev">HTML, CSS, JS minimum</td>
+            <td data-label="Kanvas AI">None</td>
+          </tr>
+          <tr>
+            <td data-label="Criteria">Error debugging</td>
+            <td data-label="Traditional dev">Stack Overflow + guesswork</td>
+            <td data-label="Kanvas AI">Built-in AI error solver</td>
+          </tr>
+          <tr>
+            <td data-label="Criteria">Templates</td>
+            <td data-label="Traditional dev">Buy, adapt, or build</td>
+            <td data-label="Kanvas AI">Generated or scraped on demand</td>
+          </tr>
+          <tr>
+            <td data-label="Criteria">Help when stuck</td>
+            <td data-label="Traditional dev">Search, ask a friend</td>
+            <td data-label="Kanvas AI">K.ai assistant, in-platform</td>
+          </tr>
+          <tr>
+            <td data-label="Criteria">Export</td>
+            <td data-label="Traditional dev">Manual file management</td>
+            <td data-label="Kanvas AI">One click — HTML, CSS, JSON</td>
+          </tr>
+          <tr>
+            <td data-label="Criteria">Cost to start</td>
+            <td data-label="Traditional dev">Hosting + dev time + tools</td>
+            <td data-label="Kanvas AI">Free</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
@@ -451,6 +625,61 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="faq-section">
+    <div class="section-inner">
+      <span class="section-eyebrow section-eyebrow-center">FAQ</span>
+      <div class="faq-heading">
+        <h2>Questions, answered.</h2>
+        <p>Everything you'd want to know before you start building.</p>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item open">
+          <div class="faq-question">
+            <span>Do I need to know HTML or CSS to use Kanvas AI?</span>
+            <i class="ti ti-plus faq-icon"></i>
+          </div>
+          <div class="faq-answer">No. Everything is drag, drop, and click. If you do know HTML, you can edit the generated code directly — but you'll never have to.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Can I export my site and host it elsewhere?</span>
+            <i class="ti ti-plus faq-icon"></i>
+          </div>
+          <div class="faq-answer">Yes. Export as clean HTML, CSS, or JSON. The output is standard web code that works on any host — Netlify, Vercel, GitHub Pages, your own server, anywhere.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>What is K.ai, and is it trained on my data?</span>
+            <i class="ti ti-plus faq-icon"></i>
+          </div>
+          <div class="faq-answer">K.ai is the in-platform AI assistant. It answers web development questions and helps you navigate Kanvas AI. It does not train on your projects or store your prompts beyond the active session.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>What happens to my projects?</span>
+            <i class="ti ti-plus faq-icon"></i>
+          </div>
+          <div class="faq-answer">Your projects are saved under "Nocode" and stay there until you delete them. You can edit, preview, or export them any time. Nothing expires.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Is Kanvas AI really free?</span>
+            <i class="ti ti-plus faq-icon"></i>
+          </div>
+          <div class="faq-answer">Yes — fully free to start, no credit card. Build as many pages as you want, export them, and ship them.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Can I use this for client work or commercial projects?</span>
+            <i class="ti ti-plus faq-icon"></i>
+          </div>
+          <div class="faq-answer">Yes. Anything you build is yours. Use it for client projects, portfolios, MVPs, or personal sites — no royalties, no attribution required.</div>
+        </div>
       </div>
     </div>
   </section>
@@ -675,6 +904,18 @@
 
     send.addEventListener('click', sendMsg);
     input.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg(); });
+
+    // FAQ accordion
+    (function () {
+      const items = document.querySelectorAll('.faq-item');
+      items.forEach(item => {
+        item.querySelector('.faq-question').addEventListener('click', () => {
+          const isOpen = item.classList.contains('open');
+          items.forEach(i => i.classList.remove('open'));
+          if (!isOpen) item.classList.add('open');
+        });
+      });
+    })();
   </script>
 
 </body>
